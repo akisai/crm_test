@@ -2,4 +2,6 @@
     <string name="app_name">crm_test</string>
     <string name="crm_test_application">CRM test application!</string>
     <string name="sign_in_with_google">Sign In with Google</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

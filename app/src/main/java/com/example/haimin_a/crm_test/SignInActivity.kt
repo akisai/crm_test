@@ -1,5 +1,7 @@
 package com.example.haimin_a.crm_test
 
+import android.content.ContentProvider
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,9 +13,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class SignInActivity : AppCompatActivity() {
 
     val RC_SIGN_IN: Int = 1
     lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         initGoogleOption()
         firebaseAuth = FirebaseAuth.getInstance()
+        setupUI()
     }
 
     private fun initGoogleOption() {
@@ -52,8 +56,19 @@ class MainActivity : AppCompatActivity() {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle (account)
+                firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
+                Toast.makeText(this, "Google sign faled: (", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
+            if (it.isSuccessful) {
+                startActivity(HomeActivity.getLaunchIntent(this))
+            } else {
                 Toast.makeText(this, "Google sign faled: (", Toast.LENGTH_LONG).show()
             }
         }
@@ -69,6 +84,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun getLaunchIntent
+        fun getLaunchIntent(from: Context) = Intent(from, HomeActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
     }
 }
