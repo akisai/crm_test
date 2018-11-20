@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "613389589104",
+    "firebase_url": "https://crmtest-921b0.firebaseio.com",
+    "project_id": "crmtest-921b0",
+    "storage_bucket": "crmtest-921b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613389589104:android:cd43322825d34db4",
+        "android_client_info": {
+          "package_name": "com.example.haimin_a.crm_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613389589104-gfu3qge4pbuk0093scq08fdcdfn61c15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.haimin_a.crm_test",
+            "certificate_hash": "6580f7e294f561e95fd6d40207a5a45701442a1b"
+          }
+        },
+        {
+          "client_id": "613389589104-cbpqgpfd1fts5lcmq7qout3e6oi1311f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_PDBvvwMAt2XIexKjtKQiw-D3cCZnqxE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613389589104-9843riha75kkdlmmkmm7qibmi63ev0t4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
