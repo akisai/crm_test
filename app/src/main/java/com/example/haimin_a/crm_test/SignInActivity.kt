@@ -5,7 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Toast
+import com.example.haimin_a.crm_test.rest_client.Operations
+import com.example.haimin_a.crm_test.rest_client.URLBuilder
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -14,6 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_main.*
+import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.uiThread
@@ -22,8 +24,7 @@ import java.net.URL
 class SignInActivity : AppCompatActivity() {
 
     val RC_SIGN_IN: Int = 1
-    val REST_URL: String = "http://192.168.1.125:8080"
-    val SEP: String = "/"
+    private val REST_URL: String = "http://192.168.1.125:8080"//getString(R.string.rest_url)
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var mGoogleSignInOptions: GoogleSignInOptions
     private lateinit var firebaseAuth: FirebaseAuth
@@ -35,6 +36,8 @@ class SignInActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         setupUI()
     }
+
+    fun getUrl() = REST_URL
 
     private fun initGoogleOption() {
         mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
@@ -51,17 +54,27 @@ class SignInActivity : AppCompatActivity() {
         sign_in_btn.setOnClickListener {
             signIn()
         }
+        registration.setOnClickListener {
+            regisration()
+        }
+    }
+
+    private fun regisration() {
+        startActivity(RegistartionActivity.getRegistrationIntent(this))
     }
 
     private fun signIn() {
-        if (login.text.toString() == "") {
+        val loginR = login.text.toString()
+        val passwordR = password.text.toString()
+        val md5 = DigestUtils.md5Hex(passwordR)
+        if (loginR.isNullOrEmpty()) {
             login.setText("kek")
-            Toast.makeText(this, "Not found login", Toast.LENGTH_LONG).show()
-        } else if (password.text.toString() == "") {
+            longToast("Not found login")
+        } else if (passwordR.isNullOrEmpty()) {
             longToast("Not found password")
         } else {
             doAsync {
-                val result = URL(REST_URL + SEP + Operations.findUser + SEP + login.text.toString() + SEP + password.text.toString()).readText()
+                val result = URL(URLBuilder.build(REST_URL, Operations.findUser.toString(), loginR, md5)).readText()
                 uiThread {
                     Log.d("Request", result)
                     if (result.toBoolean()) {
@@ -87,7 +100,7 @@ class SignInActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
-                Toast.makeText(this, "Google sign failed", Toast.LENGTH_LONG).show()
+                longToast("Google sign failed")
             }
         }
     }
@@ -98,7 +111,7 @@ class SignInActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 startActivity(HomeActivity.getLaunchIntent(this))
             } else {
-                Toast.makeText(this, "Google sign failed", Toast.LENGTH_LONG).show()
+                longToast("Google sign failed")
             }
         }
     }
@@ -116,5 +129,7 @@ class SignInActivity : AppCompatActivity() {
         fun getLaunchIntent(from: Context) = Intent(from, HomeActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
+
+        fun getRegistrationIntent(from: Context) = Intent(from, RegistartionActivity::class.java)
     }
 }

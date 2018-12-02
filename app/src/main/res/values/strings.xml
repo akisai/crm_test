@@ -7,4 +7,10 @@
     <string name="login">Login</string>
     <string name="password">Password</string>
     <string name="sing_in">Sign In</string>
+    <string name="register_string">Register now</string>
+    <string name="register">Register</string>
+    <string name="new_login">New login</string>
+    <string name="new_password">Password</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="rest_url">http://192.168.1.125:8080</string>
 </resources>
