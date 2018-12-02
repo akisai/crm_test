@@ -4,4 +4,7 @@
     <string name="sign_in_with_google">Sign In with Google</string>
     <string name="congratulations">Congratulations!</string>
     <string name="sign_out">Sign Out</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="sing_in">Sign In</string>
 </resources>
