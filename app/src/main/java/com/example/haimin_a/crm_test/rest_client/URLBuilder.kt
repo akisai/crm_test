@@ -6,7 +6,7 @@ object URLBuilder {
     fun build(vararg strings: String): String {
         var result = ""
         for (str in strings)
-            result += SEP + str
+            result += str + SEP
         return result
     }
 }
