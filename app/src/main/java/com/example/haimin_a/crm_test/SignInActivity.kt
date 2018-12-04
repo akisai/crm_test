@@ -16,6 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
+import java.net.HttpURLConnection
 import java.net.URL
 
 class SignInActivity : AppCompatActivity() {
@@ -67,18 +68,42 @@ class SignInActivity : AppCompatActivity() {
             loginR.isEmpty() -> longToast("Not found login")
             passwordR.isEmpty() -> longToast("Not found password")
             else -> {
-                indeterminateProgressDialog("This a progress dialog", "").setCancelable(false)
+                val dialog = indeterminateProgressDialog("This a progress dialog", "")
+                dialog.setCancelable(false)
                 doAsync {
-                    val result = URL(URLBuilder.build(REST_URL, Operations.findUser.toString(), loginR, md5)).readText()
-                    uiThread {
-                        if (result.toBoolean()) longToast("Done")
-                        else longToast("Error")
+                    var test: Boolean = false
+                    val result: String? = null
+                    try {
+                        val connection = URL(
+                            URLBuilder.build(
+                                REST_URL,
+                                Operations.findUser.toString(),
+                                loginR,
+                                md5
+                            )
+                        ).openConnection() as HttpURLConnection
+                        connection.requestMethod = "POST"
+                        connection.connectTimeout = 30000
+                        connection.readTimeout = 30000
+                        connection.doOutput = true
+                        connection.connect()
+                    } catch (e: Exception) {
+                        test = true
+                    }
+                    uiThread { _ ->
+                        dialog.hide()
+                        if (test)
+                            dialog.hide()
+                        alert("Testing alerts") {
+                            title = "Alert"
+                            yesButton { }
+                        }.show()
                     }
                 }
+                //dialog.hide()
             }
         }
     }
-
 
     private fun signInGoogle() {
         val signInIntent: Intent = mGoogleSignInClient.signInIntent
