@@ -42,7 +42,7 @@ class RegistrationActivity : AppCompatActivity() {
             else -> {
                 val md5 = DigestUtils.md5Hex(newPassword)
                 doAsync {
-                    val result = URL(URLBuilder.build(REST_URL, Operations.save.toString(), newLogin, md5)).readText()
+                    val result = URL(buildURL(REST_URL, Operations.save.toString(), newLogin, md5)).readText()
                     uiThread {
                         Log.d("Request", result)
                         if (result.toBoolean()) {

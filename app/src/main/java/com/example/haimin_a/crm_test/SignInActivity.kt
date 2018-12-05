@@ -3,6 +3,7 @@ package com.example.haimin_a.crm_test
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -16,6 +17,8 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
 import java.net.HttpURLConnection
 import java.net.URL
+import org.json.JSONObject
+import java.lang.Exception
 
 class SignInActivity : AppCompatActivity() {
 
@@ -69,39 +72,49 @@ class SignInActivity : AppCompatActivity() {
                 val dialog = indeterminateProgressDialog("This a progress dialog", "")
                 dialog.setCancelable(false)
                 doAsync {
-                    var result: String? = null
+                    var data: String? = null
                     var exception: Boolean = false
                     try {
                         val connection = URL(
                             buildURL(
                                 REST_URL,
-                                Operations.findUser.str,
-                                loginR,
-                                md5
+                                Operations.findUser.str
                             )
                         ).openConnection() as HttpURLConnection
                         connection.requestMethod = "POST"
                         connection.connectTimeout = 30000
                         connection.readTimeout = 30000
                         connection.doOutput = true
-                        connection.addRequestProperty("id", "get")
-                        connection.connect()
+                        connection.doInput = true
+                        connection.setRequestProperty("Content-Type", "application/json")
+                        val json = JSONObject()
+                            .put("login", login)
+                            .put("password", md5)
+                        connection.outputStream.write(json.toString().toByteArray())
+                        data = connection.inputStream.bufferedReader().readText()
+                        connection.disconnect()
                     } catch (e: Exception) {
                         exception = true
                     }
                     uiThread {
-                        dialog.hide()
-                        if (exception)
+                        if (exception) {
                             alert("Login failed") {
                                 title = "Alert"
                                 yesButton { }
                             }.show()
+                        }
+                        if (!data.isNullOrEmpty())
+                            if(data.toBoolean())
+                                longToast("wow")
+                            else
+                                longToast("bad")
+                        dialog.hide()
                     }
                 }
-                //dialog.hide()
             }
         }
     }
+
 
     private fun signInGoogle() {
         val signInIntent: Intent = mGoogleSignInClient.signInIntent
