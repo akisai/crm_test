@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.haimin_a.crm_test.rest_client.Operations
-import com.example.haimin_a.crm_test.rest_client.URLBuilder
 import kotlinx.android.synthetic.main.activity_registration.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.doAsync
@@ -28,6 +27,7 @@ class RegistrationActivity : AppCompatActivity() {
         registation_btn.setOnClickListener {
             createNewUser()
         }
+        val boolean = doNothing()
     }
 
     private fun createNewUser() {

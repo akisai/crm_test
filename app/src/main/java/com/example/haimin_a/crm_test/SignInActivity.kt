@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.haimin_a.crm_test.rest_client.Operations
-import com.example.haimin_a.crm_test.rest_client.URLBuilder
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -74,9 +73,9 @@ class SignInActivity : AppCompatActivity() {
                     var exception: Boolean = false
                     try {
                         val connection = URL(
-                            URLBuilder.build(
+                            buildURL(
                                 REST_URL,
-                                Operations.findUser.toString(),
+                                Operations.findUser.str,
                                 loginR,
                                 md5
                             )
@@ -93,10 +92,10 @@ class SignInActivity : AppCompatActivity() {
                     uiThread {
                         dialog.hide()
                         if (exception)
-                        alert("Login failed") {
-                            title = "Alert"
-                            yesButton { }
-                        }.show()
+                            alert("Login failed") {
+                                title = "Alert"
+                                yesButton { }
+                            }.show()
                     }
                 }
                 //dialog.hide()
