@@ -3,7 +3,6 @@ package com.example.haimin_a.crm_test
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -15,10 +14,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
-import org.json.JSONObject
-import java.lang.Exception
 
 class SignInActivity : AppCompatActivity() {
 
@@ -73,20 +71,11 @@ class SignInActivity : AppCompatActivity() {
                 dialog.setCancelable(false)
                 doAsync {
                     var data: String? = null
-                    var exception: Boolean = false
+                    var exception = false
                     try {
-                        val connection = URL(
-                            buildURL(
-                                REST_URL,
-                                Operations.findUser.str
-                            )
-                        ).openConnection() as HttpURLConnection
-                        connection.requestMethod = "POST"
-                        connection.connectTimeout = 30000
-                        connection.readTimeout = 30000
-                        connection.doOutput = true
-                        connection.doInput = true
-                        connection.setRequestProperty("Content-Type", "application/json")
+                        val connection = URL(REST_URL + Operations.findUser.str)
+                            .openConnection() as HttpURLConnection
+                        buildPostParam(connection)
                         val json = JSONObject()
                             .put("login", login)
                             .put("password", md5)
@@ -100,11 +89,11 @@ class SignInActivity : AppCompatActivity() {
                         if (exception) {
                             alert("Login failed") {
                                 title = "Alert"
-                                yesButton { }
+                                yesButton {}
                             }.show()
                         }
                         if (!data.isNullOrEmpty())
-                            if(data.toBoolean())
+                            if (data.toBoolean())
                                 longToast("wow")
                             else
                                 longToast("bad")

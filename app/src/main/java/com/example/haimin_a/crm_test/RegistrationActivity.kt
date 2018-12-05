@@ -27,7 +27,6 @@ class RegistrationActivity : AppCompatActivity() {
         registation_btn.setOnClickListener {
             createNewUser()
         }
-        val boolean = doNothing()
     }
 
     private fun createNewUser() {
@@ -42,7 +41,7 @@ class RegistrationActivity : AppCompatActivity() {
             else -> {
                 val md5 = DigestUtils.md5Hex(newPassword)
                 doAsync {
-                    val result = URL(buildURL(REST_URL, Operations.save.toString(), newLogin, md5)).readText()
+                    val result = URL(REST_URL + Operations.save.str).readText()
                     uiThread {
                         Log.d("Request", result)
                         if (result.toBoolean()) {
