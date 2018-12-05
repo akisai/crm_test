@@ -3,7 +3,9 @@ package com.example.haimin_a.crm_test
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.example.haimin_a.crm_test.rest_client.FindUser
 import com.example.haimin_a.crm_test.rest_client.Operations
+import com.example.haimin_a.crm_test.rest_client.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -11,12 +13,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.time.LocalDateTime
 
 class SignInActivity : AppCompatActivity() {
 
@@ -33,6 +36,7 @@ class SignInActivity : AppCompatActivity() {
         initGoogleOption()
         firebaseAuth = FirebaseAuth.getInstance()
         setupUI()
+        println(LocalDateTime.now())
     }
 
     private fun initGoogleOption() {
@@ -67,41 +71,39 @@ class SignInActivity : AppCompatActivity() {
             loginR.isEmpty() -> longToast("Not found login")
             passwordR.isEmpty() -> longToast("Not found password")
             else -> {
-                val dialog = indeterminateProgressDialog("Login in progress...", "")
-                dialog.setCancelable(false)
+                val dialogLog = indeterminateProgressDialog("Login in progress...", "")
+                dialogLog.setCancelable(false)
                 doAsync {
-                    var data: String? = null
                     var exception = false
+                    var response: String? = null
                     try {
-                        println("test")
                         val connection = URL(REST_URL + Operations.findUser.str)
                             .openConnection() as HttpURLConnection
                         buildPostParams(connection)
-                        val json = JSONObject()
-                            .put("login", login)
-                            .put("password", md5)
-                        connection.outputStream.write(json.toString().toByteArray())
-                        data = connection.inputStream.bufferedReader().readText()
+                        val json = Gson().toJson(FindUser(loginR, md5))
+                        connection.outputStream.write(json.toByteArray())
+                        response = connection.inputStream.bufferedReader().readText()
                         connection.disconnect()
                     } catch (e: Exception) {
                         exception = true
                     }
                     uiThread {
+                        dialogLog.dismiss()
                         if (exception) {
                             alert("Connection error") {
                                 title = "Login failed"
                                 yesButton {}
                             }.show()
                         }
-                        if (!data.isNullOrEmpty())
-                            if (data.toBoolean())
-                                longToast("wow")
-                            else
-                                alert("Invalid user or password") {
-                                    title = "Login failed"
-                                    yesButton {}
-                                }.show()
-                        dialog.hide()
+                        if (!response.isNullOrEmpty()) {
+                            val gson: User = Gson().fromJson(response, User::class.java)
+                            if (!gson.login.isEmpty())
+                                longToast(response.toString())
+                        } else
+                            alert("Invalid user or password") {
+                                title = "Login failed"
+                                yesButton {}
+                            }.show()
                     }
                 }
             }

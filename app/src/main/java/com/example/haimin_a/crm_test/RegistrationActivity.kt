@@ -2,15 +2,17 @@ package com.example.haimin_a.crm_test
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.example.haimin_a.crm_test.rest_client.Operations
+import com.example.haimin_a.crm_test.rest_client.SaveUser
+import com.example.haimin_a.crm_test.rest_client.User
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_registration.*
 import org.apache.commons.codec.digest.DigestUtils
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
+import java.lang.Exception
+import java.net.HttpURLConnection
 import java.net.URL
+import java.time.LocalDateTime
 
 class RegistrationActivity : AppCompatActivity() {
 
@@ -40,19 +42,44 @@ class RegistrationActivity : AppCompatActivity() {
             newPassword != newRepeatPassword -> longToast("Passwords not equals")
             else -> {
                 val md5 = DigestUtils.md5Hex(newPassword)
+                val dialogReg = indeterminateProgressDialog("Registration in progress...")
+                dialogReg.setCancelable(false)
                 doAsync {
-                    val result = URL(REST_URL + Operations.save.str).readText()
+                    var exception = false
+                    var response: String? = null
+                    try {
+                        val connection = URL(REST_URL + Operations.save.str)
+                            .openConnection() as HttpURLConnection
+                        buildPostParams(connection)
+                        val json = Gson().toJson(SaveUser(newLogin, md5, LocalDateTime.now().toString()))
+                        connection.outputStream.write(json.toByteArray())
+                        response = connection.inputStream.bufferedReader().readText()
+                        connection.disconnect()
+                    } catch (e: Exception) {
+                        exception = true
+                    }
                     uiThread {
-                        Log.d("Request", result)
-                        if (result.toBoolean()) {
-                            longToast("Done")
-                        } else {
-                            longToast("Error")
+                        dialogReg.dismiss()
+                        if (exception) {
+                            alert("Connection error") {
+                                title = "Registration failed"
+                                yesButton {}
+                            }.show()
                         }
+                        if (!response.isNullOrEmpty()) {
+                            val gson = Gson().fromJson(response, User::class.java)
+                            if (!gson.login.isEmpty()) {
+                                longToast(response.toString())
+                                startActivity<SignInActivity>()
+                                finish()
+                            }
+                        } else
+                            alert("Unknown error") {
+                                title = "Registration failed"
+                                yesButton {}
+                            }.show()
                     }
                 }
-                startActivity<SignInActivity>()
-                finish()
             }
         }
 
