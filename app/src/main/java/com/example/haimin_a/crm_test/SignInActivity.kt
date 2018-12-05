@@ -73,6 +73,7 @@ class SignInActivity : AppCompatActivity() {
                     var data: String? = null
                     var exception = false
                     try {
+                        println("test")
                         val connection = URL(REST_URL + Operations.findUser.str)
                             .openConnection() as HttpURLConnection
                         buildPostParam(connection)
@@ -87,8 +88,8 @@ class SignInActivity : AppCompatActivity() {
                     }
                     uiThread {
                         if (exception) {
-                            alert("Login failed") {
-                                title = "Alert"
+                            alert("Connection error") {
+                                title = "Login failed"
                                 yesButton {}
                             }.show()
                         }
@@ -96,7 +97,10 @@ class SignInActivity : AppCompatActivity() {
                             if (data.toBoolean())
                                 longToast("wow")
                             else
-                                longToast("bad")
+                                alert("Invalid user or password") {
+                                    title = "Login failed"
+                                    yesButton {}
+                                }.show()
                         dialog.hide()
                     }
                 }
