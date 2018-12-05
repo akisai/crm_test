@@ -67,7 +67,7 @@ class SignInActivity : AppCompatActivity() {
             loginR.isEmpty() -> longToast("Not found login")
             passwordR.isEmpty() -> longToast("Not found password")
             else -> {
-                val dialog = indeterminateProgressDialog("This a progress dialog", "")
+                val dialog = indeterminateProgressDialog("Login in progress...", "")
                 dialog.setCancelable(false)
                 doAsync {
                     var data: String? = null
@@ -76,7 +76,7 @@ class SignInActivity : AppCompatActivity() {
                         println("test")
                         val connection = URL(REST_URL + Operations.findUser.str)
                             .openConnection() as HttpURLConnection
-                        buildPostParam(connection)
+                        buildPostParams(connection)
                         val json = JSONObject()
                             .put("login", login)
                             .put("password", md5)

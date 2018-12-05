@@ -14,7 +14,7 @@ fun buildURL(vararg strings: String): String {
     return result
 }
 
-fun buildPostParam(connection: HttpURLConnection) {
+fun buildPostParams(connection: HttpURLConnection) {
     connection.requestMethod = "POST"
     connection.connectTimeout = 30000
     connection.readTimeout = 30000
