@@ -1,7 +1,6 @@
 package com.example.haimin_a.crm_test
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.haimin_a.crm_test.rest_client.Operations
@@ -71,8 +70,8 @@ class SignInActivity : AppCompatActivity() {
                 val dialog = indeterminateProgressDialog("This a progress dialog", "")
                 dialog.setCancelable(false)
                 doAsync {
-                    var test: Boolean = false
-                    val result: String? = null
+                    var result: String? = null
+                    var exception: Boolean = false
                     try {
                         val connection = URL(
                             URLBuilder.build(
@@ -86,15 +85,15 @@ class SignInActivity : AppCompatActivity() {
                         connection.connectTimeout = 30000
                         connection.readTimeout = 30000
                         connection.doOutput = true
+                        connection.addRequestProperty("id", "get")
                         connection.connect()
                     } catch (e: Exception) {
-                        test = true
+                        exception = true
                     }
-                    uiThread { _ ->
+                    uiThread {
                         dialog.hide()
-                        if (test)
-                            dialog.hide()
-                        alert("Testing alerts") {
+                        if (exception)
+                        alert("Login failed") {
                             title = "Alert"
                             yesButton { }
                         }.show()
