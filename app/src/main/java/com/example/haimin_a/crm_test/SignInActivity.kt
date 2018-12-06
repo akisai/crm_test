@@ -3,6 +3,7 @@ package com.example.haimin_a.crm_test
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.example.haimin_a.crm_test.utils.buildPostParams
 import com.example.haimin_a.crm_test.rest_client.FindUser
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.User
@@ -60,7 +61,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun regisration() {
-        startActivity(intentFor<RegistrationActivity>().newTask().clearTask())
+        startActivity<RegistrationActivity>()
     }
 
     private fun signIn() {
@@ -84,7 +85,7 @@ class SignInActivity : AppCompatActivity() {
                         connection.outputStream.write(json.toByteArray())
                         response = connection.inputStream.bufferedReader().readText()
                         connection.disconnect()
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         exception = true
                     }
                     uiThread {
@@ -94,22 +95,24 @@ class SignInActivity : AppCompatActivity() {
                                 title = "Login failed"
                                 yesButton {}
                             }.show()
+                        } else {
+                            if (!response.isNullOrEmpty()) {
+                                val gson: User = Gson().fromJson(response, User::class.java)
+                                if (!gson.login.isEmpty()) {
+                                    longToast(response.toString())
+                                    startActivity(intentFor<NavigationActivity>().newTask().clearTask())
+                                }
+                            } else
+                                alert("Invalid user or password") {
+                                    title = "Login failed"
+                                    yesButton {}
+                                }.show()
                         }
-                        if (!response.isNullOrEmpty()) {
-                            val gson: User = Gson().fromJson(response, User::class.java)
-                            if (!gson.login.isEmpty())
-                                longToast(response.toString())
-                        } else
-                            alert("Invalid user or password") {
-                                title = "Login failed"
-                                yesButton {}
-                            }.show()
                     }
                 }
             }
         }
     }
-
 
     private fun signInGoogle() {
         val signInIntent: Intent = mGoogleSignInClient.signInIntent

@@ -2,6 +2,7 @@ package com.example.haimin_a.crm_test
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.example.haimin_a.crm_test.utils.buildPostParams
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.SaveUser
 import com.example.haimin_a.crm_test.rest_client.User
@@ -22,12 +23,17 @@ class RegistrationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
         REST_URL = getString(R.string.rest_url)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         setupUI()
     }
 
     fun setupUI() {
         registation_btn.setOnClickListener {
             createNewUser()
+        }
+        supportFragmentManager.addOnBackStackChangedListener {
+            startActivity<SignInActivity>()
+            finish()
         }
     }
 
@@ -65,19 +71,20 @@ class RegistrationActivity : AppCompatActivity() {
                                 title = "Registration failed"
                                 yesButton {}
                             }.show()
+                        } else {
+                            if (!response.isNullOrEmpty()) {
+                                val gson = Gson().fromJson(response, User::class.java)
+                                if (!gson.login.isEmpty()) {
+                                    longToast(response.toString())
+                                    startActivity<SignInActivity>()
+                                    finish()
+                                }
+                            } else
+                                alert("Unknown error") {
+                                    title = "Registration failed"
+                                    yesButton {}
+                                }.show()
                         }
-                        if (!response.isNullOrEmpty()) {
-                            val gson = Gson().fromJson(response, User::class.java)
-                            if (!gson.login.isEmpty()) {
-                                longToast(response.toString())
-                                startActivity<SignInActivity>()
-                                finish()
-                            }
-                        } else
-                            alert("Unknown error") {
-                                title = "Registration failed"
-                                yesButton {}
-                            }.show()
                     }
                 }
             }
