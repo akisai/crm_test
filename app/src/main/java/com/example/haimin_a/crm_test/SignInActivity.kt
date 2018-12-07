@@ -74,7 +74,7 @@ class SignInActivity : AppCompatActivity() {
             else -> {
                 val dialogLog = indeterminateProgressDialog("Login in progress...", "")
                 dialogLog.setCancelable(false)
-                doAsync {
+                doAsync{
                     var exception = false
                     var response: String? = null
                     try {
