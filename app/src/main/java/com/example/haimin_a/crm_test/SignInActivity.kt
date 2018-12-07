@@ -41,7 +41,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun initGoogleOption() {
-        mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+        mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
@@ -127,7 +127,7 @@ class SignInActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account!!)
             } catch (e: ApiException) {
-                longToast("Google sign failed")
+                longToast("Google sign failed 1")
             }
         }
     }
@@ -138,7 +138,7 @@ class SignInActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 startActivity(intentFor<HomeActivity>().newTask().clearTask())
             } else {
-                longToast("Google sign failed")
+                longToast("Google sign failed 2")
             }
         }
     }

@@ -48,6 +48,7 @@ dependencies {
     implementation 'org.jetbrains.anko:anko-commons:0.10.4'
     implementation 'commons-codec:commons-codec:1.11'
     implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.android.gms:play-services-games:16.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
