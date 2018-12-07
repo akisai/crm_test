@@ -2,6 +2,7 @@ package com.example.haimin_a.crm_test
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_home.*
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
@@ -23,6 +24,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun singOut() {
         startActivity(intentFor<SignInActivity>().newTask().clearTask())
+        FirebaseAuth.getInstance().signOut()
         finish()
     }
 }

@@ -15,19 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "580197324036-slvo5l0g5ar2fuv0jflub8n3t3vheise.apps.googleusercontent.com",
+          "client_id": "580197324036-brftih9lfr01dqjti3j4up4jistitjjj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.haimin_a.crm_test",
-            "certificate_hash": "a221fe2d5b1d15df56cdfd33d6ee3039411cadee"
-          }
-        },
-        {
-          "client_id": "580197324036-igj58g22mulefroqmbm44tv9vlbi7n3b.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.haimin_a.crm_test",
-            "certificate_hash": "0d02b37b162d5c5cf1dcc24c59df5647b23ea23d"
+            "certificate_hash": "6580f7e294f561e95fd6d40207a5a45701442a1b"
           }
         },
         {
