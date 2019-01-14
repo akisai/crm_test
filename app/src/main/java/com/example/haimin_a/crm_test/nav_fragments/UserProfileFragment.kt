@@ -20,7 +20,6 @@ class UserProfileFragment : Fragment() {
     companion object {
         fun newInstanse() =
             UserProfileFragment()
-
     }
 }
 

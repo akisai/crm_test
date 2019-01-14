@@ -3,12 +3,17 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:padding="16dp"
              tools:context=".nav_fragments.UserProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="446dp"
             android:text="@string/hello_blank_fragment"/>
+    <Switch
+            android:text="Switch"
+            android:layout_width="376dp"
+            android:layout_height="448dp" android:id="@+id/switch1"/>
 
 </FrameLayout>
