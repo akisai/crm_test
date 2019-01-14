@@ -21,7 +21,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
 
-        nav_header_title
+        //nav_header_title
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
