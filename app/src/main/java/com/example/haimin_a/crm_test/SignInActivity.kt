@@ -1,12 +1,14 @@
 package com.example.haimin_a.crm_test
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.example.haimin_a.crm_test.utils.buildPostParams
 import com.example.haimin_a.crm_test.rest_client.FindUser
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.User
+import com.example.haimin_a.crm_test.utils.getPostResponse
+import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -18,9 +20,6 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
-import java.net.HttpURLConnection
-import java.net.URL
-import java.time.LocalDateTime
 
 class SignInActivity : AppCompatActivity() {
 
@@ -37,7 +36,6 @@ class SignInActivity : AppCompatActivity() {
         initGoogleOption()
         firebaseAuth = FirebaseAuth.getInstance()
         setupUI()
-        println(LocalDateTime.now())
     }
 
     private fun initGoogleOption() {
@@ -53,7 +51,7 @@ class SignInActivity : AppCompatActivity() {
             signInGoogle()
         }
         sign_in_btn.setOnClickListener {
-            signIn()
+            signIn(this)
         }
         registration.setOnClickListener {
             regisration()
@@ -64,7 +62,7 @@ class SignInActivity : AppCompatActivity() {
         startActivity<RegistrationActivity>()
     }
 
-    private fun signIn() {
+    private fun signIn(context: Context) {
         val loginR = login.text.toString()
         val passwordR = password.text.toString()
         val md5 = DigestUtils.md5Hex(passwordR)
@@ -74,39 +72,17 @@ class SignInActivity : AppCompatActivity() {
             else -> {
                 val dialogLog = indeterminateProgressDialog("Login in progress...", "")
                 dialogLog.setCancelable(false)
-                doAsync{
-                    var exception = false
-                    var response: String? = null
-                    try {
-                        val connection = URL(REST_URL + Operations.findUser.str)
-                            .openConnection() as HttpURLConnection
-                        buildPostParams(connection)
-                        val json = Gson().toJson(FindUser(loginR, md5))
-                        connection.outputStream.write(json.toByteArray())
-                        response = connection.inputStream.bufferedReader().readText()
-                        connection.disconnect()
-                    } catch (e: Throwable) {
-                        exception = true
-                    }
+                doAsync {
+                    val json = Gson().toJson(FindUser(loginR, md5))
+                    val response = getPostResponse(REST_URL + Operations.findUser.str, json)
                     uiThread {
                         dialogLog.dismiss()
-                        if (exception) {
-                            alert("Connection error") {
-                                title = "Login failed"
-                                yesButton {}
-                            }.show()
-                        } else {
-                            if (!response.isNullOrEmpty()) {
-                                val gson: User = Gson().fromJson(response, User::class.java)
-                                if (!gson.login.isEmpty()) {
-                                    longToast(response.toString())
-                                    startActivity(intentFor<NavigationActivity>().newTask().clearTask())
-                                }
-                            } else
-                                alert("Invalid user or password") {
-                                    title = "Login failed"
-                                    yesButton {}
-                                }.show()
+                        if (processingResponse(context, response, "Login failed", "Invalid user or password")) {
+                            val gson: User = Gson().fromJson(response, User::class.java)
+                            if (!gson.login.isEmpty()) {
+                                context.longToast(response)
+                                startActivity(intentFor<NavigationActivity>().newTask().clearTask())
+                            }
                         }
                     }
                 }

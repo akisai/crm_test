@@ -1,18 +1,17 @@
 package com.example.haimin_a.crm_test
 
-import android.support.v7.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
-import com.example.haimin_a.crm_test.utils.buildPostParams
+import android.support.v7.app.AppCompatActivity
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.SaveUser
 import com.example.haimin_a.crm_test.rest_client.User
+import com.example.haimin_a.crm_test.utils.getPostResponse
+import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_registration.*
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
-import java.lang.Exception
-import java.net.HttpURLConnection
-import java.net.URL
 import java.time.LocalDateTime
 
 class RegistrationActivity : AppCompatActivity() {
@@ -29,7 +28,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     fun setupUI() {
         registation_btn.setOnClickListener {
-            createNewUser()
+            createNewUser(this)
         }
         supportFragmentManager.addOnBackStackChangedListener {
             startActivity<SignInActivity>()
@@ -37,7 +36,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun createNewUser() {
+    private fun createNewUser(context: Context) {
         val newLogin = new_login.text.toString()
         val newPassword = new_password.text.toString()
         val newRepeatPassword = repeat_new_password.text.toString()
@@ -51,44 +50,21 @@ class RegistrationActivity : AppCompatActivity() {
                 val dialogReg = indeterminateProgressDialog("Registration in progress...")
                 dialogReg.setCancelable(false)
                 doAsync {
-                    var exception = false
-                    var response: String? = null
-                    try {
-                        val connection = URL(REST_URL + Operations.save.str)
-                            .openConnection() as HttpURLConnection
-                        buildPostParams(connection)
-                        val json = Gson().toJson(SaveUser(newLogin, md5, LocalDateTime.now().toString()))
-                        connection.outputStream.write(json.toByteArray())
-                        response = connection.inputStream.bufferedReader().readText()
-                        connection.disconnect()
-                    } catch (e: Exception) {
-                        exception = true
-                    }
+                    val json = Gson().toJson(SaveUser(newLogin, md5, LocalDateTime.now().toString()))
+                    val response = getPostResponse(REST_URL + Operations.save.str, json)
                     uiThread {
                         dialogReg.dismiss()
-                        if (exception) {
-                            alert("Connection error") {
-                                title = "Registration failed"
-                                yesButton {}
-                            }.show()
-                        } else {
-                            if (!response.isNullOrEmpty()) {
-                                val gson = Gson().fromJson(response, User::class.java)
-                                if (!gson.login.isEmpty()) {
-                                    longToast(response.toString())
-                                    startActivity<SignInActivity>()
-                                    finish()
-                                }
-                            } else
-                                alert("Unknown error") {
-                                    title = "Registration failed"
-                                    yesButton {}
-                                }.show()
+                        if (processingResponse(context, response, "Registration failed", "Database error")) {
+                            val gson = Gson().fromJson(response, User::class.java)
+                            if (!gson.login.isEmpty()) {
+                                startActivity<SignInActivity>()
+                                finish()
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 }
+

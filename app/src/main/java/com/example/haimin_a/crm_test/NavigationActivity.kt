@@ -1,5 +1,6 @@
 package com.example.haimin_a.crm_test
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -8,10 +9,13 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import com.example.haimin_a.crm_test.nav_fragments.UserProfileFragment
 import com.example.haimin_a.crm_test.nav_fragments.replaceFragment
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
+import kotlinx.android.synthetic.main.nav_header_navigation.*
+import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.jetbrains.anko.startActivity
 
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -21,7 +25,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
 
-        //nav_header_title
+        nav_view.getHeaderView(0).user_name.text = "sfjdsk"
+        nav_view.getHeaderView(0).user_email.text = "akisai.azu@gmail.com"
+        //nav_view.getHeaderView(0).user_image.setImageResource("test")
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
