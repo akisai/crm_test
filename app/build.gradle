@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.google.android.gms:play-services-games:16.0.0'
     implementation 'com.android.support:design:28.0.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
 
 apply plugin: 'com.google.gms.google-services'

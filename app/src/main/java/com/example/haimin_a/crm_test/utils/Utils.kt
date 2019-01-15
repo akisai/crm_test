@@ -1,12 +1,10 @@
 package com.example.haimin_a.crm_test.utils
 
 import android.content.Context
-import com.example.haimin_a.crm_test.rest_client.User
-import com.google.gson.Gson
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.yesButton
 import java.net.HttpURLConnection
 import java.net.URL
-import com.example.haimin_a.crm_test.SignInActivity
-import org.jetbrains.anko.*
 
 fun buildPostParams(connection: HttpURLConnection) {
     connection.requestMethod = "POST"
@@ -35,13 +33,13 @@ fun getPostResponse(url: String, json: String): String {
 fun processingResponse(
     context: Context,
     response: String,
-    titleAllert: String = "Error",
+    titleAlert: String = "Error",
     message2: String = "Unexpected error",
     message1: String = "Connection error"
 ): Boolean {
     if (response.toBoolean()) {
         context.alert(message1) {
-            title = titleAllert
+            title = titleAlert
             yesButton {}
         }.show()
     } else {
@@ -49,7 +47,7 @@ fun processingResponse(
             return true
         } else
             context.alert(message2) {
-                title = titleAllert
+                title = titleAlert
                 yesButton {}
             }.show()
     }
