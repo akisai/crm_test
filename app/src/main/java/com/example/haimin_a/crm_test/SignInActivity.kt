@@ -115,7 +115,7 @@ class SignInActivity : AppCompatActivity() {
                 startActivity(intentFor<NavigationActivity>("type" to "google",
                     "name" to firebaseAuth.currentUser!!.displayName,
                     "email" to firebaseAuth.currentUser!!.email,
-                    "icon" to firebaseAuth.currentUser!!.photoUrl)
+                    "icon" to firebaseAuth.currentUser!!.photoUrl.toString())
                     .newTask().clearTask())
             } else {
                 longToast("Google sign failed 2")
