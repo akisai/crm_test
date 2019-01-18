@@ -81,7 +81,12 @@ class SignInActivity : AppCompatActivity() {
                             val gson: User = Gson().fromJson(response, User::class.java)
                             if (!gson.login.isEmpty()) {
                                 context.longToast(response)
-                                startActivity(intentFor<NavigationActivity>("type" to "sign", "user" to gson.id).newTask().clearTask())
+                                startActivity(
+                                    intentFor<NavigationActivity>(
+                                        "type" to "sign",
+                                        "user" to gson.id
+                                    ).newTask().clearTask()
+                                )
                             }
                         }
                     }
@@ -112,23 +117,35 @@ class SignInActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                startActivity(intentFor<NavigationActivity>("type" to "google",
-                    "name" to firebaseAuth.currentUser!!.displayName,
-                    "email" to firebaseAuth.currentUser!!.email,
-                    "icon" to firebaseAuth.currentUser!!.photoUrl.toString())
-                    .newTask().clearTask())
+                startActivity(
+                    intentFor<NavigationActivity>(
+                        "type" to "google",
+                        "name" to firebaseAuth.currentUser!!.displayName,
+                        "email" to firebaseAuth.currentUser!!.email,
+                        "icon" to firebaseAuth.currentUser!!.photoUrl.toString()
+                    )
+                        .newTask().clearTask()
+                )
             } else {
                 longToast("Google sign failed 2")
             }
         }
     }
 
-    /*override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val user = firebaseAuth.currentUser
         if (user != null) {
-            startActivity(intentFor<HomeActivity>().newTask().clearTask())
+            startActivity(
+                intentFor<NavigationActivity>(
+                    "type" to "google",
+                    "name" to firebaseAuth.currentUser!!.displayName,
+                    "email" to firebaseAuth.currentUser!!.email,
+                    "icon" to firebaseAuth.currentUser!!.photoUrl.toString()
+                )
+                    .newTask().clearTask()
+            )
             finish()
         }
-    }*/
+    }
 }

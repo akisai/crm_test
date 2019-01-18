@@ -11,6 +11,7 @@ import android.view.MenuItem
 import com.example.haimin_a.crm_test.nav_fragments.UserProfileFragment
 import com.example.haimin_a.crm_test.nav_fragments.replaceFragment
 import com.example.haimin_a.crm_test.rest_client.User
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
@@ -29,9 +30,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             Picasso.get().load(intent.getStringExtra("icon")).into(nav_view.getHeaderView(0).user_image)
         }
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        fab.setOnClickListener {
+            //onBackPressed()
         }
 
 
@@ -45,6 +45,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     override fun onBackPressed() {
+        FirebaseAuth.getInstance().signOut()
+        startActivity<SignInActivity>()
         finish()
     }
 
