@@ -10,16 +10,15 @@ import android.view.MenuItem
 import com.example.haimin_a.crm_test.nav_fragments.MapFragment
 import com.example.haimin_a.crm_test.nav_fragments.UserProfileFragment
 import com.example.haimin_a.crm_test.nav_fragments.replaceFragment
-import com.google.android.gms.maps.GoogleMap
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.jetbrains.anko.startActivity
 
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +87,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     true,
                     R.id.navigation_content
                 )
-                /*startActivity<MapsActivity>()*/
                 setTitle("Maps")
             }
             R.id.nav_settings -> {
@@ -107,4 +105,5 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         navigation_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }
