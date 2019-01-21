@@ -2,19 +2,20 @@ package com.example.haimin_a.crm_test
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.haimin_a.crm_test.nav_fragments.MapFragment
 import com.example.haimin_a.crm_test.nav_fragments.UserProfileFragment
 import com.example.haimin_a.crm_test.nav_fragments.replaceFragment
-import com.example.haimin_a.crm_test.rest_client.User
+import com.google.android.gms.maps.GoogleMap
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.nav_header_navigation.view.*
 import org.jetbrains.anko.startActivity
 
@@ -82,14 +83,18 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
             }
             R.id.nav_manage -> {
-
+                replaceFragment(
+                    MapFragment(),
+                    true,
+                    R.id.navigation_content
+                )
+                /*startActivity<MapsActivity>()*/
+                setTitle("Maps")
             }
             R.id.nav_settings -> {
                 startActivity<SettingsActivity>()
             }
             R.id.nav_info -> {
-                /*supportFragmentManager.beginTransaction()
-                    .replace(R.id.navigation_layout, UserProfileFragment.newInstanse(), "sasat").commit()*/
                 replaceFragment(
                     UserProfileFragment(),
                     true,
