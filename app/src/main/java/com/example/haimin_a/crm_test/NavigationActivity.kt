@@ -47,6 +47,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        nav_view.menu.findItem(R.id.nav_doctor).isVisible = false
     }
 
     override fun onBackPressed() {
@@ -79,7 +81,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             fab.show()
         }
         when (item.itemId) {
-            R.id.nav_camera -> {
+            R.id.nav_edit -> {
                 // Handle the camera action
                 replaceFragment(
                     ServiceFragment(),
@@ -88,18 +90,18 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 )
                 setTitle("Edit")
             }
-            R.id.nav_gallery -> {
+            R.id.nav_procedure -> {
                 replaceFragment(
                     TaskFragment(),
                     true,
                     R.id.navigation_content
                 )
-                setTitle("Choose doctor")
+                setTitle("Choose procedure")
             }
-            R.id.nav_slideshow -> {
+            R.id.nav_doctor -> {
 
             }
-            R.id.nav_manage -> {
+            R.id.nav_find_us -> {
                 replaceFragment(
                     MapFragment(),
                     true,
@@ -161,13 +163,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                             )
                         //
                         else -> {
-                            if (!gson.name.isEmpty()) {
-                                nav_view.getHeaderView(0).user_name.text = gson.name + " " + gson.surname
-                            } else {
-                                Picasso.get().load(gson.pic).into(nav_view.getHeaderView(0).user_image)
-                                nav_view.getHeaderView(0).user_name.text = gson.surname
-                                nav_view.getHeaderView(0).user_email.text = gson.email
-                            }
+                            nav_view.getHeaderView(0).user_name.text =
+                                    if (gson.name.isEmpty()) gson.surname else gson.name + " " + gson.surname
+                            Picasso.get().load(gson.pic).into(nav_view.getHeaderView(0).user_image)
+                            nav_view.getHeaderView(0).user_email.text = gson.email
                         }
                     }
                 }
