@@ -12,7 +12,7 @@
     <string name="new_login">New login</string>
     <string name="new_password">Password</string>
     <string name="repeat_password">Repeat password</string>
-    <string name="rest_url">http://192.168.7.63:8080</string>
+    <string name="rest_url">http://192.168.1.231:8080</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -100,4 +100,9 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
+    <string name="google_pic">https://pbs.twimg.com/profile_images/1045580248467886080/_uwwJdr3_400x400.jpg</string>
+    <string name="find_us">Find us</string>
+    <string name="choose_procedure">Choose procedure</string>
+    <string name="choose_doctor">Choose doctor</string>
+    <string name="edit_profile">Edit profile</string>
 </resources>

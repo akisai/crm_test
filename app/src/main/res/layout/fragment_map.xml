@@ -7,6 +7,15 @@
              android:layout_height="match_parent"
              tools:context=".nav_fragments.MapFragment">
 
+    <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainOfficeB"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="100dp"
+            android:layout_marginEnd="10dp"
+            android:src="@android:drawable/ic_dialog_map"
+            android:visibility="invisible"/>
     <fragment
             android:id="@+id/google_maps"
             android:name="com.google.android.gms.maps.SupportMapFragment"

@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
+import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
 
@@ -40,7 +41,6 @@ class SignInActivity : AppCompatActivity() {
 
     private fun initGoogleOption() {
         mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, mGoogleSignInOptions)
@@ -65,7 +65,7 @@ class SignInActivity : AppCompatActivity() {
     private fun signIn(context: Context) {
         val loginR = login.text.toString()
         val passwordR = password.text.toString()
-        val md5 = DigestUtils.md5Hex(passwordR)
+        val md5 = String(Hex.encodeHex(DigestUtils.sha256(passwordR)))
         when {
             loginR.isEmpty() -> longToast("Not found login")
             passwordR.isEmpty() -> longToast("Not found password")
@@ -84,7 +84,7 @@ class SignInActivity : AppCompatActivity() {
                                 startActivity(
                                     intentFor<NavigationActivity>(
                                         "type" to "sign",
-                                        "user" to gson.id
+                                        "user" to gson.id.toString()
                                     ).newTask().clearTask()
                                 )
                             }
@@ -123,8 +123,7 @@ class SignInActivity : AppCompatActivity() {
                         "name" to firebaseAuth.currentUser!!.displayName,
                         "email" to firebaseAuth.currentUser!!.email,
                         "icon" to firebaseAuth.currentUser!!.photoUrl.toString()
-                    )
-                        .newTask().clearTask()
+                    ).newTask().clearTask()
                 )
             } else {
                 longToast("Google sign failed 2")

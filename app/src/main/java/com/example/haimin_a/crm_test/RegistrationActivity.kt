@@ -10,6 +10,7 @@ import com.example.haimin_a.crm_test.utils.getPostResponse
 import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_registration.*
+import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import org.jetbrains.anko.*
 import java.time.LocalDateTime
@@ -46,7 +47,7 @@ class RegistrationActivity : AppCompatActivity() {
             newRepeatPassword.isEmpty() -> longToast("Repeat password")
             newPassword != newRepeatPassword -> longToast("Passwords not equals")
             else -> {
-                val md5 = DigestUtils.md5Hex(newPassword)
+                val md5 = String(Hex.encodeHex(DigestUtils.sha256(newPassword)))
                 val dialogReg = indeterminateProgressDialog("Registration in progress...")
                 dialogReg.setCancelable(false)
                 doAsync {

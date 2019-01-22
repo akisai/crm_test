@@ -19,6 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.fragment_map.*
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -45,6 +46,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         mMap.setOnMarkerClickListener(this)
         val mainOffice = LatLng(59.8242617, 30.5128346)
         mMap.addMarker(MarkerOptions().position(mainOffice).title("Main office"))
+        mainOfficeB.setOnClickListener {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mainOffice, 12f))
+        }
+        mainOfficeB.show()
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mainOffice, 12.0f))
 
         setUpMap()
@@ -70,11 +75,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
 
         fusedLocationClient.lastLocation.addOnSuccessListener(activity!!) { location ->
             // Got last known location. In some rare situations this can be null.
-            // 3
             if (location != null) {
                 lastLocation = location
                 val currentLatLng = LatLng(location.latitude, location.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                /*doAsync {
+                    val str = URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + currentLatLng + "&destination=" + mainOffice + "&key=AIzaSyDeW26ZL27BfXqhxpH_D7p7kLTTdRUSN6w").readText()
+                    uiThread {
+                        activity!!.applicationContext.longToast(str)
+                    }
+                }*/
             }
         }
     }

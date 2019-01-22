@@ -17,9 +17,4 @@ class TaskFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_task, container, false)
     }
-
-    companion object {
-        fun newInstance() =
-            TaskFragment()
-    }
 }
