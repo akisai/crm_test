@@ -81,7 +81,7 @@ class SignInActivity : AppCompatActivity() {
                         if (processingResponse(context, response, "Login failed", "Invalid user or password")) {
                             val gson: User = Gson().fromJson(response, User::class.java)
                             if (!gson.login.isEmpty()) {
-                                context.longToast(response)
+                                //context.longToast(response)
                                 startActivity(
                                     intentFor<NavigationActivity>(
                                         "type" to "sign",

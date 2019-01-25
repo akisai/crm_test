@@ -1,6 +1,5 @@
 package com.example.haimin_a.crm_test
 
-import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -13,7 +12,6 @@ import com.example.haimin_a.crm_test.rest_client.FindUserInfo
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.UserInfo
 import com.example.haimin_a.crm_test.utils.getPostResponse
-import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
@@ -48,7 +46,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        nav_view.menu.findItem(R.id.nav_doctor).isVisible = false
+        replaceFragment(
+            StartFragment(),
+            true,
+            R.id.navigation_content
+        )
+
+        //nav_view.menu.findItem(R.id.nav_doctor).isVisible = false
     }
 
     override fun onBackPressed() {
@@ -84,11 +88,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             R.id.nav_edit -> {
                 // Handle the camera action
                 replaceFragment(
-                    ServiceFragment(),
+                    ProfileFragment(),
                     true,
                     R.id.navigation_content
                 )
-                setTitle("Edit")
+                setTitle("Profile")
             }
             R.id.nav_procedure -> {
                 replaceFragment(
@@ -99,7 +103,12 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 setTitle("Choose procedure")
             }
             R.id.nav_doctor -> {
-
+                replaceFragment(
+                    DoctorFragment(),
+                    true,
+                    R.id.navigation_content
+                )
+                setTitle("Choose doctor")
             }
             R.id.nav_find_us -> {
                 replaceFragment(
@@ -116,7 +125,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
             R.id.nav_info -> {
                 replaceFragment(
-                    UserProfileFragment(),
+                    AboutUsFragment(),
                     true,
                     R.id.navigation_content
                 )
@@ -134,14 +143,15 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 nav_view.getHeaderView(0).user_name.text = intent.getStringExtra("name")
                 nav_view.getHeaderView(0).user_email.text = intent.getStringExtra("email")
                 Picasso.get().load(intent.getStringExtra("icon")).into(nav_view.getHeaderView(0).user_image)
+                nav_view.menu.findItem(R.id.nav_edit).isVisible = false
             }
             intent.getStringExtra("type") == "sign" -> {
-                getUserInfo(intent.getStringExtra("user")!!, this)
+                getUserInfo(intent.getStringExtra("user")!!)
             }
         }
     }
 
-    fun getUserInfo(id: String, context: Context) {
+    fun getUserInfo(id: String) {
         REST_URL = getString(R.string.rest_url)
         val dialogLog = indeterminateProgressDialog("Get user info...", "")
         dialogLog.setCancelable(false)
@@ -150,7 +160,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             val response = getPostResponse(REST_URL + Operations.userInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (processingResponse(context, response, "Get user info failed", "Empty info")) {
+                if (!response.isEmpty()) {
                     val gson: UserInfo = Gson().fromJson(response, UserInfo::class.java)
                     when {
                         gson.name.isEmpty() && gson.surname.isEmpty() ->
@@ -169,6 +179,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                             nav_view.getHeaderView(0).user_email.text = gson.email
                         }
                     }
+                } else {
+                    nav_view.getHeaderView(0).user_name.text = "Ivan Ivanov"
+                    nav_view.getHeaderView(0).user_email.text = "IvanIvanov@gmail.com"
+                    Picasso.get().load(getString(R.string.google_pic)).into(
+                        nav_view.getHeaderView(0)
+                            .user_image
+                    )
                 }
             }
         }

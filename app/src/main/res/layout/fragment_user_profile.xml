@@ -4,16 +4,19 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:padding="16dp"
-             tools:context=".nav_fragments.UserProfileFragment">
+             tools:context=".nav_fragments.AboutUsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="446dp"
-            android:text="@string/hello_blank_fragment"/>
-    <Switch
-            android:text="Switch"
-            android:layout_width="376dp"
-            android:layout_height="448dp" android:id="@+id/switch1"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about"
+            android:layout_gravity="center_horizontal|top"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:src="@tools:sample/avatars"
+            android:id="@+id/about_img" android:layout_marginTop="50dp" android:layout_gravity="center_horizontal"/>
+
 
 </FrameLayout>

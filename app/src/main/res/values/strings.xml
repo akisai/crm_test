@@ -105,4 +105,14 @@
     <string name="choose_procedure">Choose procedure</string>
     <string name="choose_doctor">Choose doctor</string>
     <string name="edit_profile">Edit profile</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="patronymic">Patronymic</string>
+    <string name="birthday">yyyy-mm-dd</string>
+    <string name="email">Email</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="about">О стоматологии</string>
+    <string name="uri_about">https://medicina-top.ru/wp-content/uploads/2017/12/stomatologiya-300-300.jpg</string>
+    <string name="welcome">Welcome to us\nChoose options</string>
 </resources>

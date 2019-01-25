@@ -2,6 +2,7 @@ package com.example.haimin_a.crm_test.nav_fragments
 
 
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.haimin_a.crm_test.R
+import com.example.haimin_a.crm_test.utils.getPoints
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.android.synthetic.main.fragment_map.*
 
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -81,12 +84,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
                 /*doAsync {
                     val str = URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + currentLatLng + "&destination=" + mainOffice + "&key=AIzaSyDeW26ZL27BfXqhxpH_D7p7kLTTdRUSN6w").readText()
+                    val steps = JSONObject(str).getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps")
                     uiThread {
-                        activity!!.applicationContext.longToast(str)
+                        for (i in 0 until steps.length()) {
+                            val points = steps.getJSONObject(i).getJSONObject("polyline").getString("points")
+                            path.add(PolyUtil.decode(points))
+                        }
+                        for (i in 0 until path.size) {
+                            mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
+                        }
                     }
                 }*/
             }
         }
+        val path = getPoints()
+        for (i in 0 until path.size)
+            mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
     }
 
     companion object {
