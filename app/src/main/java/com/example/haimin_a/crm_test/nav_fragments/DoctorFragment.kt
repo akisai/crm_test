@@ -19,6 +19,16 @@ import java.net.URL
 
 class DoctorFragment : Fragment() {
 
+    private var procedure: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (arguments != null) {
+            procedure = arguments!!.getString(ARG_PARAM)
+        }
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,13 +49,50 @@ class DoctorFragment : Fragment() {
                 if (response.isNotEmpty()) {
                     val gson: ArrayList<DoctorsInfo> =
                         Gson().fromJson(response, object : TypeToken<List<DoctorsInfo>>() {}.type)
-                    doctors_list.adapter = DoctorsAdapter(activity!!, gson)
-                    doctors_list.setOnItemClickListener { _, _, _, _ ->
-                        activity!!.supportFragmentManager.beginTransaction().detach(this@DoctorFragment).attach(TaskFragment()).commit()
+                    if (procedure != null) {
+                        val list: ArrayList<DoctorsInfo> = ArrayList()
+                        for (d in gson) {
+                            if (procedure!!.contains(d.id.toString())) {
+                                list.add(d)
+                            }
+                        }
+                        doctors_list.adapter = DoctorsAdapter(activity!!, list)
+                        doctors_list.setOnItemClickListener { _, _, position, _ ->
+                            activity!!.supportFragmentManager.beginTransaction()
+                                .replace(
+                                    R.id.navigation_content,
+                                    TimeFragment.newInstance(gson[position].id.toString()),
+                                    "Choose Time"
+                                )
+                                .addToBackStack(null).commit()
+                        }
+                    } else {
+                        doctors_list.adapter = DoctorsAdapter(activity!!, gson)
+                        doctors_list.setOnItemClickListener { _, _, position, _ ->
+                            activity!!.supportFragmentManager.beginTransaction()
+                                .replace(
+                                    R.id.navigation_content,
+                                    TaskFragment.newInstance(gson[position].procedure),
+                                    "Choose Procedure"
+                                )
+                                .addToBackStack(null).commit()
+                        }
                     }
+
                 }
             }
         }
     }
 
+    companion object {
+        private val ARG_PARAM = "Procedure"
+
+        fun newInstance(str: String): DoctorFragment {
+            val fragment = DoctorFragment()
+            val args = Bundle()
+            args.putString(ARG_PARAM, str)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 }

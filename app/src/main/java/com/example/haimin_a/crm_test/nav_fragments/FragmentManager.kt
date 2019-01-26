@@ -10,6 +10,7 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment,
     val ft = supportFragmentManager
         .beginTransaction()
         .replace(containerViewId, fragment)
+        .addToBackStack(null)
     if (!supportFragmentManager.isStateSaved) {
         ft.commit()
     } else if (allowStateLoss) {

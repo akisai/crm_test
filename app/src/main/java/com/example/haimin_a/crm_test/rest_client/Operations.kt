@@ -5,5 +5,8 @@ enum class Operations(val str: String) {
     findUser("/findUser"),
     userInfo("/userInfo"),
     updateInfo("/updateInfo"),
-    getDoctors("/getDoctors")
+    getDoctors("/getDoctors"),
+    getProcedure("/getProcedure"),
+    getTime("/getTime"),
+    getRasp("/getRasp")
 }

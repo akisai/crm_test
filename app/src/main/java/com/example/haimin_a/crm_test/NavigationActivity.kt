@@ -18,10 +18,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.app_bar_navigation.*
 import kotlinx.android.synthetic.main.nav_header_navigation.view.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.indeterminateProgressDialog
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -56,9 +53,19 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     override fun onBackPressed() {
-        FirebaseAuth.getInstance().signOut()
-        startActivity<SignInActivity>()
-        finish()
+        if (supportFragmentManager.backStackEntryCount > 1)
+            supportFragmentManager.popBackStack()
+        else {
+            alert("Are you sure?") {
+                title = "Log out"
+                yesButton {
+                    FirebaseAuth.getInstance().signOut()
+                    startActivity<SignInActivity>()
+                    finish()
+                }
+                noButton { }
+            }.show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -73,7 +80,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     // as you specify a parent activity in AndroidManifest.xml.
         when {
             item.itemId == R.id.action_settings -> {
-                startActivity<SettingsActivity>()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -120,8 +126,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 setTitle("Maps")
             }
             R.id.nav_settings -> {
-                startActivity<SettingsActivity>()
-                fab.hide()
+                //fab.hide()
             }
             R.id.nav_info -> {
                 replaceFragment(
@@ -160,7 +165,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             val response = getPostResponse(REST_URL + Operations.userInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (!response.isEmpty()) {
+                if (response.isNotEmpty()) {
                     val gson: UserInfo = Gson().fromJson(response, UserInfo::class.java)
                     when {
                         gson.name.isEmpty() && gson.surname.isEmpty() ->
