@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import android.widget.Button
 import com.example.haimin_a.crm_test.R
 
 
@@ -16,9 +16,19 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        view.findViewById<Button>(R.id.delete_rasp).setOnClickListener {
+            deleteRasp()
+        }
+        setFields()
+        return view
     }
 
+    private fun setFields() {
 
+    }
+
+    private fun deleteRasp() {
+
+    }
 }

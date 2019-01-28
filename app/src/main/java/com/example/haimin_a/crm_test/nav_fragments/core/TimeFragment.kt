@@ -4,6 +4,7 @@ package com.example.haimin_a.crm_test.nav_fragments.core
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.example.haimin_a.crm_test.R
+import com.example.haimin_a.crm_test.nav_fragments.SettingsFragment
 import com.example.haimin_a.crm_test.rest_client.*
 import com.example.haimin_a.crm_test.utils.getPostResponse
 import com.example.haimin_a.crm_test.utils.processingResponse
@@ -18,21 +20,20 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_time.*
 import org.jetbrains.anko.*
-import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
 
 
 class TimeFragment : Fragment() {
 
-    private var docId: String? = null
+    private var task: ArrayList<String>? = null
     private lateinit var REST_URL: String
     private lateinit var GSON: Gson
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            docId = arguments!!.getString(ARG_PARAM)
+            task = arguments!!.getStringArrayList(ARG_PARAM)
         }
     }
 
@@ -66,7 +67,6 @@ class TimeFragment : Fragment() {
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)
         ).show()
-
     }
 
 
@@ -74,17 +74,17 @@ class TimeFragment : Fragment() {
         val dialogLog = activity!!.indeterminateProgressDialog("Get time info...", "")
         dialogLog.setCancelable(false)
         doAsync {
-            val json = GSON.toJson(FindTimeInfo(docId!!.toLong()))
-            val jsonTime = GSON.toJson(FindTasks(docId!!.toLong(), LocalDate.parse(dateDoctor.text)))
+            val json = GSON.toJson(FindTimeInfo(task!![0].toLong()))
+            val jsonTime = GSON.toJson(FindTasks(task!![0].toLong(), dateDoctor.text.toString()))
             val response = getPostResponse(REST_URL + Operations.getTime.str, json)
-            val responseTime = getPostResponse(REST_URL + Operations.getTime.str, jsonTime)
+            val responseTime = getPostResponse(REST_URL + Operations.getRasp.str, jsonTime)
             uiThread {
                 dialogLog.dismiss()
                 if (processingResponse(activity!!, response, needFirst = false, needSecond = false)) {
                     val wrongTime: ArrayList<LocalTime> = ArrayList()
                     if (processingResponse(activity!!, responseTime, needFirst = false, needSecond = false)) {
                         val gsonTime: ArrayList<TasksInfo> =
-                            GSON.fromJson(response, object : TypeToken<List<TasksInfo>>() {}.type)
+                            GSON.fromJson(responseTime, object : TypeToken<List<TasksInfo>>() {}.type)
                         for (t in gsonTime) {
                             wrongTime.add(LocalTime.parse(t.time))
                         }
@@ -94,13 +94,13 @@ class TimeFragment : Fragment() {
                     var rasp = LocalTime.parse(gson.start)
                     val end = LocalTime.parse(gson.end)
                     do {
-                        if (!wrongTime.contains(rasp)) {
+                        if (!wrongTime.contains(rasp))
                             time.add(rasp)
-                            rasp = rasp.plusMinutes(30)
-                        }
+                        rasp = rasp.plusMinutes(30)
                     } while (end > rasp)
                     list_time.adapter = ArrayAdapter(activity!!.applicationContext, R.layout.time_list, time)
                     list_time.setOnItemClickListener { _, _, position, _ ->
+                        println(time[position])
                         saveRasp(time[position])
                     }
                 } else {
@@ -121,26 +121,43 @@ class TimeFragment : Fragment() {
         doAsync {
             val json = GSON.toJson(
                 SaveRasp(
-                    activity!!.intent.getStringExtra("user").toLong(), docId!!.toLong(), time,
+                    activity!!.intent.getStringExtra("user").toLong(),
+                    task!![0].toLong(),
+                    task!![1].toLong(),
+                    time.toString(),
                     dateDoctor.text.toString()
                 )
             )
+            println(json)
             val responseRasp = getPostResponse(REST_URL + Operations.saveRasp.str, json)
             uiThread {
                 dialogSave.dismiss()
-                if (processingResponse(activity!!, responseRasp))
-                    responseRasp
+                if (processingResponse(activity!!, responseRasp)) {
+                    getBack()
+                }
             }
         }
     }
 
-    companion object {
-        private val ARG_PARAM = "DocId"
+    private fun getBack() {
+        fragmentManager!!.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        activity!!.supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.navigation_content,
+                SettingsFragment(),
+                "Settings"
+            )
+            .addToBackStack(null).commit()
+        activity!!.title = "Settings"
+    }
 
-        fun newInstance(str: String): TimeFragment {
+    companion object {
+        private val ARG_PARAM = "TaskInfo"
+
+        fun newInstance(list: ArrayList<String>): TimeFragment {
             val fragment = TimeFragment()
             val args = Bundle()
-            args.putString(ARG_PARAM, str)
+            args.putStringArrayList(ARG_PARAM, list)
             fragment.arguments = args
             return fragment
         }

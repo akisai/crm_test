@@ -22,12 +22,12 @@ import org.jetbrains.anko.uiThread
 
 class TaskFragment : Fragment() {
 
-    private var doc: String? = null
+    private var procedure: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            doc = arguments!!.getString(ARG_PARAM)
+            procedure = arguments!!.getStringArrayList(ARG_PARAM)
         }
     }
 
@@ -50,20 +50,22 @@ class TaskFragment : Fragment() {
                 if (processingResponse(activity!!, response, needSecond = false)) {
                     val gson: ArrayList<ProcedureInfo> =
                         Gson().fromJson(response, object : TypeToken<List<ProcedureInfo>>() {}.type)
-                    if (doc != null) {
+                    if (procedure != null) {
                         val list: ArrayList<ProcedureInfo> = ArrayList()
                         for (p in gson) {
-                                if (doc!!.contains(p.id.toString())) {
-                                    list.add(p)
-                                }
+                            if (procedure!![0].contains(p.id.toString())) {
+                                list.add(p)
+                            }
                         }
-                        println(list.size)
                         procedure_list.adapter = ProcedureAdapter(activity!!, list)
-                        procedure_list.setOnItemClickListener { _, _, _, _ ->
+                        procedure_list.setOnItemClickListener { _, _, position, _ ->
+                            val time = ArrayList<String>()
+                            time.add(procedure!![1])
+                            time.add(list[position].id.toString())
                             activity!!.supportFragmentManager.beginTransaction()
                                 .replace(
                                     R.id.navigation_content,
-                                    TimeFragment.newInstance(doc!!),
+                                    TimeFragment.newInstance(time),
                                     "Choose Time"
                                 )
                                 .addToBackStack(null).commit()
@@ -71,12 +73,13 @@ class TaskFragment : Fragment() {
                     } else {
                         procedure_list.adapter = ProcedureAdapter(activity!!, gson)
                         procedure_list.setOnItemClickListener { _, _, position, _ ->
+                            val list = ArrayList<String>()
+                            list.add(gson[position].doctors)
+                            list.add(gson[position].id.toString())
                             activity!!.supportFragmentManager.beginTransaction()
                                 .replace(
                                     R.id.navigation_content,
-                                    DoctorFragment.newInstance(
-                                        gson[position].doctors
-                                    ),
+                                    DoctorFragment.newInstance(list),
                                     "Choose Doctor"
                                 )
                                 .addToBackStack(null).commit()
@@ -88,12 +91,12 @@ class TaskFragment : Fragment() {
     }
 
     companion object {
-        private val ARG_PARAM = "Doctors"
+        private val ARG_PARAM = "Procedure"
 
-        fun newInstance(str: String): TaskFragment {
+        fun newInstance(list: ArrayList<String>): TaskFragment {
             val fragment = TaskFragment()
             val args = Bundle()
-            args.putString(ARG_PARAM, str)
+            args.putStringArrayList(ARG_PARAM, list)
             fragment.arguments = args
             return fragment
         }

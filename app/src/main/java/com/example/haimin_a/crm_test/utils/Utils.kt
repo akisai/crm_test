@@ -14,8 +14,6 @@ fun buildPostParams(connection: HttpURLConnection, method: String = "POST") {
     connection.requestMethod = method
     connection.connectTimeout = 30000
     connection.readTimeout = 30000
-    connection.doOutput = true
-    connection.doInput = method == "POST"
     connection.setRequestProperty("Content-Type", "application/json")
 }
 
@@ -29,7 +27,7 @@ fun getPostResponse(url: String, json: String): String {
         response = connection.inputStream.bufferedReader().readText()
         connection.disconnect()
     } catch (e: Throwable) {
-        return true.toString()
+        return ERROR
     }
     return response
 }
@@ -75,6 +73,8 @@ fun processingResponse(
     return false
 }
 
+
+// from 59.9881 30.2166
 fun getPoints(): MutableList<List<LatLng>> {
     val path: MutableList<List<LatLng>> = ArrayList()
     path.add(PolyUtil.decode("ilcmJ{vlwDgB_AIEcAw@"))
