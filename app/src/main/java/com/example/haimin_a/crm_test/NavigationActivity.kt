@@ -1,5 +1,6 @@
 package com.example.haimin_a.crm_test
 
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -8,10 +9,13 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.example.haimin_a.crm_test.nav_fragments.*
+import com.example.haimin_a.crm_test.nav_fragments.core.DoctorFragment
+import com.example.haimin_a.crm_test.nav_fragments.core.TaskFragment
 import com.example.haimin_a.crm_test.rest_client.FindUserInfo
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.UserInfo
 import com.example.haimin_a.crm_test.utils.getPostResponse
+import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
@@ -31,7 +35,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setAccountInfo()
 
         fab.setOnClickListener {
-            //onBackPressed()
+            startActivity<EmailActivity>()
         }
 
 
@@ -48,6 +52,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             true,
             R.id.navigation_content
         )
+        title = "Hello"
 
         //nav_view.menu.findItem(R.id.nav_doctor).isVisible = false
     }
@@ -59,6 +64,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             alert("Are you sure?") {
                 title = "Log out"
                 yesButton {
+                    getSharedPreferences("login", Context.MODE_PRIVATE).edit().putBoolean("logged", false).apply()
                     FirebaseAuth.getInstance().signOut()
                     startActivity<SignInActivity>()
                     finish()
@@ -80,6 +86,12 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     // as you specify a parent activity in AndroidManifest.xml.
         when {
             item.itemId == R.id.action_settings -> {
+                replaceFragment(
+                    SettingsFragment(),
+                    true,
+                    R.id.navigation_content
+                )
+                title = "Settings"
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -98,7 +110,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     true,
                     R.id.navigation_content
                 )
-                setTitle("Profile")
+                title = "Profile"
             }
             R.id.nav_procedure -> {
                 replaceFragment(
@@ -106,7 +118,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     true,
                     R.id.navigation_content
                 )
-                setTitle("Choose procedure")
+                title = "Choose procedure"
             }
             R.id.nav_doctor -> {
                 replaceFragment(
@@ -114,7 +126,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     true,
                     R.id.navigation_content
                 )
-                setTitle("Choose doctor")
+                title = "Choose doctor"
             }
             R.id.nav_find_us -> {
                 replaceFragment(
@@ -123,10 +135,15 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     R.id.navigation_content
                 )
                 fab.hide()
-                setTitle("Maps")
+                title = "Maps"
             }
             R.id.nav_settings -> {
-                //fab.hide()
+                replaceFragment(
+                    SettingsFragment(),
+                    true,
+                    R.id.navigation_content
+                )
+                title = "Settings"
             }
             R.id.nav_info -> {
                 replaceFragment(
@@ -134,7 +151,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     true,
                     R.id.navigation_content
                 )
-                setTitle("About Us")
+                title = "About Us"
             }
         }
 
@@ -142,21 +159,28 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         return true
     }
 
-    fun setAccountInfo() {
+    private fun setAccountInfo() {
         when {
             intent.getStringExtra("type") == "google" -> {
-                nav_view.getHeaderView(0).user_name.text = intent.getStringExtra("name")
-                nav_view.getHeaderView(0).user_email.text = intent.getStringExtra("email")
-                Picasso.get().load(intent.getStringExtra("icon")).into(nav_view.getHeaderView(0).user_image)
+                val name = intent.getStringExtra("name")
+                val email = intent.getStringExtra("email")
+                val pic = intent.getStringExtra("icon")
+                saveGoogle()
+                nav_view.getHeaderView(0).user_name.text = name
+                nav_view.getHeaderView(0).user_email.text = email
+                Picasso.get().load(pic).into(nav_view.getHeaderView(0).user_image)
                 nav_view.menu.findItem(R.id.nav_edit).isVisible = false
             }
             intent.getStringExtra("type") == "sign" -> {
-                getUserInfo(intent.getStringExtra("user")!!)
+                if (intent.getStringExtra("user") == "check") {
+                    onBackPressed()
+                } else
+                    getUserInfo(intent.getStringExtra("user")!!)
             }
         }
     }
 
-    fun getUserInfo(id: String) {
+    private fun getUserInfo(id: String) {
         REST_URL = getString(R.string.rest_url)
         val dialogLog = indeterminateProgressDialog("Get user info...", "")
         dialogLog.setCancelable(false)
@@ -165,12 +189,12 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             val response = getPostResponse(REST_URL + Operations.userInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (response.isNotEmpty()) {
+                if (processingResponse(applicationContext, response, needFirst = false, needSecond = false)) {
                     val gson: UserInfo = Gson().fromJson(response, UserInfo::class.java)
                     when {
                         gson.name.isEmpty() && gson.surname.isEmpty() ->
-                            nav_view.getHeaderView(0).user_name.text = "Ivan Ivanov"
-                        gson.email.isEmpty() -> nav_view.getHeaderView(0).user_email.text = "IvanIvanov@gmail.com"
+                            nav_view.getHeaderView(0).user_name.text = getString(R.string.def_name)
+                        gson.email.isEmpty() -> nav_view.getHeaderView(0).user_email.text = getString(R.string.def_email)
                         gson.pic.isEmpty() ->
                             Picasso.get().load(getString(R.string.google_pic)).into(
                                 nav_view.getHeaderView(0)
@@ -185,8 +209,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                         }
                     }
                 } else {
-                    nav_view.getHeaderView(0).user_name.text = "Ivan Ivanov"
-                    nav_view.getHeaderView(0).user_email.text = "IvanIvanov@gmail.com"
+                    nav_view.getHeaderView(0).user_name.text = getString(R.string.def_name)
+                    nav_view.getHeaderView(0).user_email.text = getString(R.string.def_email)
                     Picasso.get().load(getString(R.string.google_pic)).into(
                         nav_view.getHeaderView(0)
                             .user_image
@@ -194,6 +218,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
             }
         }
+    }
+
+    private fun saveGoogle() {
     }
 
 }

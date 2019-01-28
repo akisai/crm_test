@@ -93,7 +93,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    fun saveFields() {
+    private fun saveFields() {
         val dialogLog = activity!!.indeterminateProgressDialog("Save user info...")
         dialogLog.setCancelable(false)
         doAsync {
@@ -113,16 +113,25 @@ class ProfileFragment : Fragment() {
             val response = getPostResponse(getString(R.string.rest_url) + Operations.updateInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (response.isEmpty()) {
+                if (response.isEmpty() || response.toBoolean()) {
                     activity!!.alert("Error") {
                         title = "Save failed"
-                        yesButton {}
+                        yesButton {
+                            refresh()
+                        }
                     }.show()
+                } else {
+                    refresh()
                 }
             }
         }
-        activity!!.supportFragmentManager.beginTransaction().detach(this).attach(this).commit()
+    }
+
+    private fun refresh() {
+        activity!!.supportFragmentManager.beginTransaction().detach(this@ProfileFragment).attach(this@ProfileFragment).commit()
     }
 }
+
+
 
 

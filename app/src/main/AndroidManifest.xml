@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.example.haimin_a.crm_test">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -23,8 +22,9 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            tools:ignore="GoogleAppIndexingWarning">
-
+            tools:ignore="GoogleAppIndexingWarning" android:fullBackupContent="@xml/backup_descriptor">
+        <activity android:name=".EmailActivity">
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -33,7 +33,10 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+                android:name="org.apache.http.legacy"
+                android:required="false"/>
+
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key"/>
@@ -44,11 +47,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".HomeActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.haimin_a.crm_test.SignInActivity"/>
         </activity>
         <activity
                 android:name=".RegistrationActivity"
@@ -65,14 +63,6 @@
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.example.haimin_a.crm_test.SignInActivity"/>
-        </activity>
-        <activity
-                android:name=".SettingsActivity"
-                android:label="@string/title_activity_settings"
-                android:parentActivityName=".NavigationActivity">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.haimin_a.crm_test.NavigationActivity"/>
         </activity>
     </application>
 

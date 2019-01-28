@@ -2,6 +2,7 @@ package com.example.haimin_a.crm_test
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.haimin_a.crm_test.rest_client.FindUser
@@ -29,6 +30,7 @@ class SignInActivity : AppCompatActivity() {
     lateinit var mGoogleSignInClient: GoogleSignInClient
     lateinit var mGoogleSignInOptions: GoogleSignInOptions
     private lateinit var firebaseAuth: FirebaseAuth
+    lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,7 @@ class SignInActivity : AppCompatActivity() {
         REST_URL = getString(R.string.rest_url)
         initGoogleOption()
         firebaseAuth = FirebaseAuth.getInstance()
+        sp = getSharedPreferences("login", Context.MODE_PRIVATE)
         setupUI()
     }
 
@@ -52,7 +55,7 @@ class SignInActivity : AppCompatActivity() {
             signInGoogle()
         }
         sign_in_btn.setOnClickListener {
-            signIn(this)
+            signIn()
         }
         registration.setOnClickListener {
             regisration()
@@ -63,7 +66,7 @@ class SignInActivity : AppCompatActivity() {
         startActivity<RegistrationActivity>()
     }
 
-    private fun signIn(context: Context) {
+    private fun signIn() {
         val loginR = login.text.toString()
         val passwordR = password.text.toString()
         val md5 = String(Hex.encodeHex(DigestUtils.sha256(passwordR)))
@@ -78,10 +81,18 @@ class SignInActivity : AppCompatActivity() {
                     val response = getPostResponse(REST_URL + Operations.findUser.str, json)
                     uiThread {
                         dialogLog.dismiss()
-                        if (processingResponse(context, response, "Login failed", "Invalid user or password")) {
+                        if (processingResponse(
+                                applicationContext,
+                                response,
+                                "Login failed",
+                                "Invalid user or password"
+                            )
+                        ) {
                             val gson: User = Gson().fromJson(response, User::class.java)
-                            if (!gson.login.isEmpty()) {
+                            if (gson.login.isNotEmpty()) {
                                 //context.longToast(response)
+                                sp.edit().putBoolean("logged", true)
+                                    .putString("user", gson.id.toString()).apply()
                                 startActivity(
                                     intentFor<NavigationActivity>(
                                         "type" to "sign",
@@ -118,14 +129,7 @@ class SignInActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                startActivity(
-                    intentFor<NavigationActivity>(
-                        "type" to "google",
-                        "name" to firebaseAuth.currentUser!!.displayName,
-                        "email" to firebaseAuth.currentUser!!.email,
-                        "icon" to firebaseAuth.currentUser!!.photoUrl.toString()
-                    ).newTask().clearTask()
-                )
+                googleStart()
             } else {
                 longToast("Google sign failed 2")
             }
@@ -134,18 +138,30 @@ class SignInActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val user = firebaseAuth.currentUser
-        if (user != null) {
+        if (sp.getBoolean("logged", false)) {
             startActivity(
                 intentFor<NavigationActivity>(
-                    "type" to "google",
-                    "name" to firebaseAuth.currentUser!!.displayName,
-                    "email" to firebaseAuth.currentUser!!.email,
-                    "icon" to firebaseAuth.currentUser!!.photoUrl.toString()
-                )
-                    .newTask().clearTask()
+                    "type" to "sign",
+                    "user" to sp.getString("user", "check")
+                ).newTask().clearTask()
             )
+        }
+        val user = firebaseAuth.currentUser
+        if (user != null) {
+            googleStart()
             finish()
         }
+    }
+
+    private fun googleStart() {
+        startActivity(
+            intentFor<NavigationActivity>(
+                "type" to "google",
+                "name" to firebaseAuth.currentUser!!.displayName,
+                "email" to firebaseAuth.currentUser!!.email,
+                "icon" to firebaseAuth.currentUser!!.photoUrl.toString(),
+                "id" to firebaseAuth.currentUser!!.uid
+            ).newTask().clearTask()
+        )
     }
 }

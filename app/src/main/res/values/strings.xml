@@ -12,7 +12,7 @@
     <string name="new_login">New login</string>
     <string name="new_password">Password</string>
     <string name="repeat_password">Repeat password</string>
-    <string name="rest_url">http://192.168.1.231:8080</string>
+    <string name="rest_url">http://192.168.7.63:8080</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -22,6 +22,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_test">test</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="def_name">Ivan Ivanov</string>
+    <string name="def_email">IvanIvanov@gmail.com</string>
 
     <!-- Strings related to Settings -->
 
@@ -116,4 +118,5 @@
     <string name="uri_about">https://medicina-top.ru/wp-content/uploads/2017/12/stomatologiya-300-300.jpg</string>
     <string name="welcome">Welcome to us\nChoose options</string>
     <string name="choose_date_and_time">Choose date and time</string>
+    <string name="fullscreen">Fullscreen</string>
 </resources>

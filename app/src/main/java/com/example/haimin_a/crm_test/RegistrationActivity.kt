@@ -1,6 +1,5 @@
 package com.example.haimin_a.crm_test
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.example.haimin_a.crm_test.rest_client.Operations
@@ -27,9 +26,9 @@ class RegistrationActivity : AppCompatActivity() {
         setupUI()
     }
 
-    fun setupUI() {
+    private fun setupUI() {
         registation_btn.setOnClickListener {
-            createNewUser(this)
+            createNewUser()
         }
         supportFragmentManager.addOnBackStackChangedListener {
             startActivity<SignInActivity>()
@@ -37,7 +36,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun createNewUser(context: Context) {
+    private fun createNewUser() {
         val newLogin = new_login.text.toString()
         val newPassword = new_password.text.toString()
         val newRepeatPassword = repeat_new_password.text.toString()
@@ -55,7 +54,13 @@ class RegistrationActivity : AppCompatActivity() {
                     val response = getPostResponse(REST_URL + Operations.save.str, json)
                     uiThread {
                         dialogReg.dismiss()
-                        if (processingResponse(context, response, "Registration failed", "Database error")) {
+                        if (processingResponse(
+                                applicationContext,
+                                response,
+                                "Registration failed",
+                                "Database error"
+                            )
+                        ) {
                             val gson = Gson().fromJson(response, User::class.java)
                             if (!gson.login.isEmpty()) {
                                 startActivity<SignInActivity>()

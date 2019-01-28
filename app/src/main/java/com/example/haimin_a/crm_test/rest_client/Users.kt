@@ -1,6 +1,7 @@
 package com.example.haimin_a.crm_test.rest_client
 
 import java.time.LocalDate
+import java.time.LocalTime
 
 data class User(val login: String, val password: String, val registration_date: String, val id: Long)
 
@@ -23,3 +24,5 @@ data class TimeInfo(val id: Long, val start: String, val end: String)
 data class FindTasks(val doctorId: Long, val date: LocalDate)
 
 data class TasksInfo(val userId: Long, val doctorId: Long, val time: String, val date: String, val id: Long)
+
+data class SaveRasp(val userId: Long, val doctorId: Long, val time: LocalTime, val date: String)

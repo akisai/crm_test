@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.android.synthetic.main.fragment_map.*
 
+
 class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
@@ -82,6 +83,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
                 lastLocation = location
                 val currentLatLng = LatLng(location.latitude, location.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                //implementations Directions API
                 /*doAsync {
                     val str = URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + currentLatLng + "&destination=" + mainOffice + "&key=AIzaSyDeW26ZL27BfXqhxpH_D7p7kLTTdRUSN6w").readText()
                     val steps = JSONObject(str).getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps")
@@ -100,6 +102,30 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         val path = getPoints()
         for (i in 0 until path.size)
             mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
+
+        checkBox.setOnClickListener {
+            if (checkBox.isChecked) {
+                hideSystemUI()
+            } else {
+                showSystemUI()
+            }
+        }
+    }
+
+    private fun hideSystemUI() {
+        activity!!.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    }
+
+    private fun showSystemUI() {
+        activity!!.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        activity!!.actionBar?.show()
     }
 
     companion object {
@@ -107,4 +133,5 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
     }
 
 }
+
 

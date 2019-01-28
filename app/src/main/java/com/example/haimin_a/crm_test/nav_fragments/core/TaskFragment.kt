@@ -1,4 +1,4 @@
-package com.example.haimin_a.crm_test.nav_fragments
+package com.example.haimin_a.crm_test.nav_fragments.core
 
 
 import android.os.Bundle
@@ -10,13 +10,14 @@ import com.example.haimin_a.crm_test.R
 import com.example.haimin_a.crm_test.nav_fragments.adapter.ProcedureAdapter
 import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.ProcedureInfo
+import com.example.haimin_a.crm_test.utils.getGetResponse
+import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_task.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.uiThread
-import java.net.URL
 
 
 class TaskFragment : Fragment() {
@@ -39,14 +40,14 @@ class TaskFragment : Fragment() {
         return view
     }
 
-    fun setList() {
+    private fun setList() {
         val dialogLog = activity!!.indeterminateProgressDialog("Get procedure info...")
         dialogLog.setCancelable(false)
         doAsync {
-            val response = URL(getString(R.string.rest_url) + Operations.getProcedure.str).readText()
+            val response = getGetResponse(getString(R.string.rest_url) + Operations.getProcedure.str)
             uiThread {
                 dialogLog.dismiss()
-                if (response.isNotEmpty()) {
+                if (processingResponse(activity!!, response, needSecond = false)) {
                     val gson: ArrayList<ProcedureInfo> =
                         Gson().fromJson(response, object : TypeToken<List<ProcedureInfo>>() {}.type)
                     if (doc != null) {
@@ -73,7 +74,9 @@ class TaskFragment : Fragment() {
                             activity!!.supportFragmentManager.beginTransaction()
                                 .replace(
                                     R.id.navigation_content,
-                                    DoctorFragment.newInstance(gson[position].doctors),
+                                    DoctorFragment.newInstance(
+                                        gson[position].doctors
+                                    ),
                                     "Choose Doctor"
                                 )
                                 .addToBackStack(null).commit()

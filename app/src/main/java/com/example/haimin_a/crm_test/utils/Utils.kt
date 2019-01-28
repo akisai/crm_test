@@ -8,12 +8,14 @@ import org.jetbrains.anko.yesButton
 import java.net.HttpURLConnection
 import java.net.URL
 
-fun buildPostParams(connection: HttpURLConnection) {
-    connection.requestMethod = "POST"
+private val ERROR = "error"
+
+fun buildPostParams(connection: HttpURLConnection, method: String = "POST") {
+    connection.requestMethod = method
     connection.connectTimeout = 30000
     connection.readTimeout = 30000
     connection.doOutput = true
-    connection.doInput = true
+    connection.doInput = method == "POST"
     connection.setRequestProperty("Content-Type", "application/json")
 }
 
@@ -32,22 +34,39 @@ fun getPostResponse(url: String, json: String): String {
     return response
 }
 
+fun getGetResponse(url: String): String {
+    val response: String?
+    try {
+        val connection = URL(url)
+            .openConnection() as HttpURLConnection
+        buildPostParams(connection, "GET")
+        response = connection.inputStream.bufferedReader().readText()
+        connection.disconnect()
+    } catch (e: Throwable) {
+        return ERROR
+    }
+    return response
+}
+
 fun processingResponse(
     context: Context,
     response: String,
     titleAlert: String = "Error",
     message2: String = "Unexpected error",
-    message1: String = "Connection error"
+    message1: String = "Connection error",
+    needFirst: Boolean = true,
+    needSecond: Boolean = true
 ): Boolean {
-    if (response.toBoolean()) {
-        context.alert(message1) {
-            title = titleAlert
-            yesButton {}
-        }.show()
+    if (response == ERROR) {
+        if (needFirst)
+            context.alert(message1) {
+                title = titleAlert
+                yesButton {}
+            }.show()
     } else {
         if (response.isNotEmpty()) {
             return true
-        } else
+        } else if (needSecond)
             context.alert(message2) {
                 title = titleAlert
                 yesButton {}

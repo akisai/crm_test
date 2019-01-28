@@ -1,4 +1,4 @@
-package com.example.haimin_a.crm_test.nav_fragments
+package com.example.haimin_a.crm_test.nav_fragments.core
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -9,13 +9,14 @@ import com.example.haimin_a.crm_test.R
 import com.example.haimin_a.crm_test.nav_fragments.adapter.DoctorsAdapter
 import com.example.haimin_a.crm_test.rest_client.DoctorsInfo
 import com.example.haimin_a.crm_test.rest_client.Operations
+import com.example.haimin_a.crm_test.utils.getGetResponse
+import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_doctor.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.uiThread
-import java.net.URL
 
 class DoctorFragment : Fragment() {
 
@@ -39,14 +40,14 @@ class DoctorFragment : Fragment() {
         return view
     }
 
-    fun setList() {
+    private fun setList() {
         val dialogLog = activity!!.indeterminateProgressDialog("Get doctors info...")
         dialogLog.setCancelable(false)
         doAsync {
-            val response = URL(getString(R.string.rest_url) + Operations.getDoctors.str).readText()
+            val response = getGetResponse(getString(R.string.rest_url) + Operations.getDoctors.str)
             uiThread {
                 dialogLog.dismiss()
-                if (response.isNotEmpty()) {
+                if (processingResponse(activity!!, response, needSecond = false)) {
                     val gson: ArrayList<DoctorsInfo> =
                         Gson().fromJson(response, object : TypeToken<List<DoctorsInfo>>() {}.type)
                     if (procedure != null) {
