@@ -122,4 +122,6 @@
     <string name="delete">Delete</string>
     <string name="delete_account">Delete Account</string>
     <string name="yours_procedure">Yours Procedure</string>
+    <string name="rasp_info">Procedure not found</string>
+    <string name="not_found_any_tasks">Not found any tasks</string>
 </resources>

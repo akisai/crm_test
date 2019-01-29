@@ -23,3 +23,9 @@ data class FindTasks(val doctorId: Long, val date: String)
 data class TasksInfo(val userId: Long, val doctorId: Long, val procedureId: Long, val time: String, val date: String, val id: Long)
 
 data class SaveRasp(val userId: Long, val doctorId: Long, val procedureId: Long, val time: String, val date: String)
+
+data class FindMyTask(val uId: Long)
+
+data class UserId(val id: Long)
+
+data class MyTasks(val id: Long, val time: String, val date: String, val name: String, val surname: String, val procedure: String, val description: String, val cost: Long)

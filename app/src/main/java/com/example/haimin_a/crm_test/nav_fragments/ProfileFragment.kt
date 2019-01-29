@@ -13,10 +13,13 @@ import com.example.haimin_a.crm_test.rest_client.Operations
 import com.example.haimin_a.crm_test.rest_client.UserInfo
 import com.example.haimin_a.crm_test.utils.DatePickerFragment
 import com.example.haimin_a.crm_test.utils.getPostResponse
+import com.example.haimin_a.crm_test.utils.processingResponse
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_service.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.indeterminateProgressDialog
+import org.jetbrains.anko.uiThread
 
 class ProfileFragment : Fragment() {
 
@@ -37,7 +40,7 @@ class ProfileFragment : Fragment() {
         return view
     }
 
-    fun setFields() {
+    private fun setFields() {
         val dialogLog = activity!!.indeterminateProgressDialog("Get user info...")
         dialogLog.setCancelable(false)
         doAsync {
@@ -45,7 +48,7 @@ class ProfileFragment : Fragment() {
             val response = getPostResponse(getString(R.string.rest_url) + Operations.userInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (response.isNotEmpty()) {
+                if (processingResponse(activity!!, response, needSecond = false)) {
                     val gson: UserInfo = Gson().fromJson(response, UserInfo::class.java)
                     if (gson.name.isNotEmpty()) name.text = gson.name
                     if (gson.surname.isNotEmpty()) surname.text = gson.surname
@@ -61,7 +64,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    fun editFields() {
+    private fun editFields() {
         edit.visibility = View.INVISIBLE
         name.setOnClickListener {
             name.visibility = View.INVISIBLE
@@ -113,22 +116,15 @@ class ProfileFragment : Fragment() {
             val response = getPostResponse(getString(R.string.rest_url) + Operations.updateInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (response.isEmpty() || response.toBoolean()) {
-                    activity!!.alert("Error") {
-                        title = "Save failed"
-                        yesButton {
-                            refresh()
-                        }
-                    }.show()
-                } else {
-                    refresh()
-                }
+                processingResponse(activity!!, response, message1 = "Save failed", needSecond = false)
+                refresh()
             }
         }
     }
 
     private fun refresh() {
-        activity!!.supportFragmentManager.beginTransaction().detach(this@ProfileFragment).attach(this@ProfileFragment).commit()
+        activity!!.supportFragmentManager.beginTransaction().detach(this@ProfileFragment).attach(this@ProfileFragment)
+            .commit()
     }
 }
 

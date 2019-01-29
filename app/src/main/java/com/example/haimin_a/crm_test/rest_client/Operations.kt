@@ -9,5 +9,8 @@ enum class Operations(val str: String) {
     getProcedure("/getProcedure"),
     getTime("/getTime"),
     getRasp("/getRasp"),
-    saveRasp("/saveRasp")
+    saveRasp("/saveRasp"),
+    getMyRasp("/getMyRasp"),
+    deleteRasp("/deleteRasp"),
+    deleteAcc("/deleteAcc")
 }

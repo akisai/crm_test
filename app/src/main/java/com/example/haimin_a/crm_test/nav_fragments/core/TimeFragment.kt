@@ -66,7 +66,18 @@ class TimeFragment : Fragment() {
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        ).setOnCancelListener {
+            activity!!.alert("test") {
+                title = "test"
+                yesButton {
+                    //todo test this
+                    activity!!.supportFragmentManager.beginTransaction().detach(this@TimeFragment).attach(this@TimeFragment).commit()
+                }
+                noButton {
+                    fragmentManager!!.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                }
+            }.show()
+        }
     }
 
 
@@ -100,7 +111,6 @@ class TimeFragment : Fragment() {
                     } while (end > rasp)
                     list_time.adapter = ArrayAdapter(activity!!.applicationContext, R.layout.time_list, time)
                     list_time.setOnItemClickListener { _, _, position, _ ->
-                        println(time[position])
                         saveRasp(time[position])
                     }
                 } else {
@@ -128,7 +138,6 @@ class TimeFragment : Fragment() {
                     dateDoctor.text.toString()
                 )
             )
-            println(json)
             val responseRasp = getPostResponse(REST_URL + Operations.saveRasp.str, json)
             uiThread {
                 dialogSave.dismiss()

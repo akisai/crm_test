@@ -29,6 +29,4 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
         c.set(year, month, dayOfMonth, 0, 0, 0)
         activity!!.findViewById<TextView>(R.id.birthday).text = DateFormat.format("yyyy-MM-dd", c.time)
     }
-
-
 }
