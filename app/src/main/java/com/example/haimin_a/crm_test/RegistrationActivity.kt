@@ -55,7 +55,7 @@ class RegistrationActivity : AppCompatActivity() {
                     uiThread {
                         dialogReg.dismiss()
                         if (processingResponse(
-                                applicationContext,
+                                this@RegistrationActivity,
                                 response,
                                 "Registration failed",
                                 "Database error"

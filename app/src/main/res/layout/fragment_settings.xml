@@ -7,13 +7,13 @@
                                              tools:context=".nav_fragments.SettingsFragment">
 
     <TextView
+            android:text="@string/yours_procedure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:id="@+id/rasp_text"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent" android:textSize="20sp"/>
+            app:layout_constraintTop_toTopOf="parent" android:textSize="20sp"
+            android:layout_marginTop="16dp" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"/>
     <TextView
             android:text="@string/not_found_any_tasks"
             android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
     <ListView
             android:id="@+id/list_tasks"
             android:layout_width="355dp"
-            android:layout_height="wrap_content"
+            android:layout_height="430dp"
             android:layout_marginBottom="12dp" app:layout_constraintBottom_toTopOf="@+id/delete_rasp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"

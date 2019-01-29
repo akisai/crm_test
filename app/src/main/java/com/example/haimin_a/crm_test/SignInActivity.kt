@@ -82,7 +82,7 @@ class SignInActivity : AppCompatActivity() {
                     uiThread {
                         dialogLog.dismiss()
                         if (processingResponse(
-                                applicationContext,
+                                this@SignInActivity,
                                 response,
                                 "Login failed",
                                 "Invalid user or password"

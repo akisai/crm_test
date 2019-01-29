@@ -64,11 +64,13 @@ fun processingResponse(
     } else {
         if (response.isNotEmpty()) {
             return true
-        } else if (needSecond)
-            context.alert(message2) {
-                title = titleAlert
-                yesButton {}
-            }.show()
+        } else {
+            if (needSecond)
+                context.alert(message2) {
+                    title = titleAlert
+                    yesButton {}
+                }.show()
+        }
     }
     return false
 }

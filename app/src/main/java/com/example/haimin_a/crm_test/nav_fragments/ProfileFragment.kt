@@ -26,6 +26,7 @@ class ProfileFragment : Fragment() {
     var user_id: Long? = null
     var category: String? = null
     var pic: String? = null
+    var id: Long = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,14 +51,15 @@ class ProfileFragment : Fragment() {
                 dialogLog.dismiss()
                 if (processingResponse(activity!!, response, needSecond = false)) {
                     val gson: UserInfo = Gson().fromJson(response, UserInfo::class.java)
-                    if (gson.name.isNotEmpty()) name.text = gson.name
-                    if (gson.surname.isNotEmpty()) surname.text = gson.surname
-                    if (gson.patronymic.isNotEmpty()) patronymic.text = gson.patronymic
-                    if (gson.birthday.isNotEmpty()) birthday.text = gson.birthday
-                    if (gson.email.isNotEmpty()) email.text = gson.email
+                    id = gson.id
+                    if (!gson.name.isNullOrEmpty()) name.text = gson.name
+                    if (!gson.surname.isNullOrEmpty()) surname.text = gson.surname
+                    if (!gson.patronymic.isNullOrEmpty()) patronymic.text = gson.patronymic
+                    if (!gson.birthday.isNullOrEmpty()) birthday.text = gson.birthday
+                    if (!gson.email.isNullOrEmpty()) email.text = gson.email
                     user_id = gson.userId
                     category = gson.category
-                    pic = if (gson.pic.isNotEmpty()) gson.pic else getString(R.string.google_pic)
+                    pic = if (!gson.pic.isNullOrEmpty()) gson.pic else getString(R.string.google_pic)
                     Picasso.get().load(pic).into(image)
                 }
             }
@@ -110,9 +112,10 @@ class ProfileFragment : Fragment() {
                     birthday.text.toString(),
                     if (edit_email.text.isNotEmpty()) edit_email.text.toString() else email.text.toString(),
                     pic!!,
-                    activity!!.intent.getStringExtra("user").toLong()
+                    id
                 )
             )
+            println(json)
             val response = getPostResponse(getString(R.string.rest_url) + Operations.updateInfo.str, json)
             uiThread {
                 dialogLog.dismiss()

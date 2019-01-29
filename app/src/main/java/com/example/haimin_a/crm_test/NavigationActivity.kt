@@ -58,7 +58,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1)
+        if (supportFragmentManager.backStackEntryCount > 0)
             supportFragmentManager.popBackStack()
         else {
             alert("Are you sure?") {
@@ -189,24 +189,25 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             val response = getPostResponse(REST_URL + Operations.userInfo.str, json)
             uiThread {
                 dialogLog.dismiss()
-                if (processingResponse(applicationContext, response, needFirst = false, needSecond = false)) {
+                if (processingResponse(this@NavigationActivity, response, needFirst = false, needSecond = false)) {
                     val gson: UserInfo = Gson().fromJson(response, UserInfo::class.java)
-                    when {
-                        gson.name.isEmpty() && gson.surname.isEmpty() ->
-                            nav_view.getHeaderView(0).user_name.text = getString(R.string.def_name)
-                        gson.email.isEmpty() -> nav_view.getHeaderView(0).user_email.text = getString(R.string.def_email)
-                        gson.pic.isEmpty() ->
-                            Picasso.get().load(getString(R.string.google_pic)).into(
-                                nav_view.getHeaderView(0)
-                                    .user_image
-                            )
-                        //
-                        else -> {
-                            nav_view.getHeaderView(0).user_name.text =
-                                    if (gson.name.isEmpty()) gson.surname else gson.name + " " + gson.surname
-                            Picasso.get().load(gson.pic).into(nav_view.getHeaderView(0).user_image)
-                            nav_view.getHeaderView(0).user_email.text = gson.email
-                        }
+                    if (gson.name.isNullOrEmpty() && gson.surname.isNullOrEmpty()) {
+                        nav_view.getHeaderView(0).user_name.text = getString(R.string.def_name)
+                    } else {
+                        nav_view.getHeaderView(0).user_name.text =
+                            if (gson.name.isNullOrEmpty()) gson.surname else gson.name + " " + gson.surname
+                    }
+                    if (gson.email.isNullOrEmpty()) {
+                        nav_view.getHeaderView(0).user_email.text = getString(R.string.def_email)
+                    } else {
+                        nav_view.getHeaderView(0).user_email.text = gson.email
+                    }
+                    if (gson.pic.isNullOrEmpty()) {
+                        Picasso.get().load(getString(R.string.google_pic))
+                            .into(nav_view.getHeaderView(0).user_image)
+                    }
+                    else {
+                        Picasso.get().load(gson.pic).into(nav_view.getHeaderView(0).user_image)
                     }
                 } else {
                     nav_view.getHeaderView(0).user_name.text = getString(R.string.def_name)

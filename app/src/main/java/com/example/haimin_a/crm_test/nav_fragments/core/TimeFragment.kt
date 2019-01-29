@@ -2,6 +2,7 @@ package com.example.haimin_a.crm_test.nav_fragments.core
 
 
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -12,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.example.haimin_a.crm_test.R
-import com.example.haimin_a.crm_test.nav_fragments.SettingsFragment
 import com.example.haimin_a.crm_test.rest_client.*
 import com.example.haimin_a.crm_test.utils.getPostResponse
 import com.example.haimin_a.crm_test.utils.processingResponse
@@ -60,24 +60,29 @@ class TimeFragment : Fragment() {
             activity!!.findViewById<TextView>(R.id.dateDoctor).text = DateFormat.format("yyyy-MM-dd", cal.time)
             makeTime()
         }
-        DatePickerDialog(
-            activity!!,
-            dateSetListener,
-            cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH),
-            cal.get(Calendar.DAY_OF_MONTH)
-        ).setOnCancelListener {
-            activity!!.alert("test") {
-                title = "test"
+        val cancelListener = DialogInterface.OnCancelListener {
+            activity!!.alert("You must select a date") {
+                title = "Attention"
                 yesButton {
-                    //todo test this
-                    activity!!.supportFragmentManager.beginTransaction().detach(this@TimeFragment).attach(this@TimeFragment).commit()
+                    activity!!.supportFragmentManager.beginTransaction().detach(this@TimeFragment)
+                        .attach(this@TimeFragment).commit()
                 }
                 noButton {
                     fragmentManager!!.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 }
             }.show()
         }
+        val datePickerDialog = DatePickerDialog(
+            activity!!,
+            dateSetListener,
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.datePicker.minDate = cal.timeInMillis
+        datePickerDialog.setOnCancelListener(cancelListener)
+        datePickerDialog.show()
+
     }
 
 
@@ -140,6 +145,7 @@ class TimeFragment : Fragment() {
             )
             val responseRasp = getPostResponse(REST_URL + Operations.saveRasp.str, json)
             uiThread {
+                Thread.sleep(500)
                 dialogSave.dismiss()
                 if (processingResponse(activity!!, responseRasp)) {
                     getBack()
@@ -149,15 +155,11 @@ class TimeFragment : Fragment() {
     }
 
     private fun getBack() {
-        fragmentManager!!.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        activity!!.supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.navigation_content,
-                SettingsFragment(),
-                "Settings"
-            )
-            .addToBackStack(null).commit()
-        activity!!.title = "Settings"
+        activity!!.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        activity!!.alert("You can view your schedule in the settings") {
+            title = "Success"
+            yesButton {}
+        }.show()
     }
 
     companion object {

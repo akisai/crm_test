@@ -124,4 +124,7 @@
     <string name="yours_procedure">Yours Procedure</string>
     <string name="rasp_info">Procedure not found</string>
     <string name="not_found_any_tasks">Not found any tasks</string>
+    <string name="message">Message</string>
+    <string name="subject">Subject</string>
+    <string name="send">Send</string>
 </resources>
