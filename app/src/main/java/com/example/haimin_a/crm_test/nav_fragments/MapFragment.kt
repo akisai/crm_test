@@ -102,30 +102,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListe
         val path = getPoints()
         for (i in 0 until path.size)
             mMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.BLUE))
-
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked) {
-                hideSystemUI()
-            } else {
-                showSystemUI()
-            }
-        }
-    }
-
-    private fun hideSystemUI() {
-        activity!!.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
-    }
-
-    private fun showSystemUI() {
-        activity!!.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        activity!!.actionBar?.show()
     }
 
     companion object {
