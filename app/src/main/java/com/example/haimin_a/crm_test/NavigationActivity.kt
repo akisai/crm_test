@@ -33,11 +33,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_navigation)
         setSupportActionBar(toolbar)
         setAccountInfo()
-
         fab.setOnClickListener {
             startActivity<EmailActivity>()
         }
-
 
         val toggle = ActionBarDrawerToggle(
             this, navigation_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -137,6 +135,14 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 fab.hide()
                 title = "Maps"
             }
+            R.id.nav_media -> {
+                replaceFragment(
+                    RecordMediaFragment(),
+                    true,
+                    R.id.navigation_content
+                )
+                title = "Record Media"
+            }
             R.id.nav_settings -> {
                 replaceFragment(
                     SettingsFragment(),
@@ -205,8 +211,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     if (gson.pic.isNullOrEmpty()) {
                         Picasso.get().load(getString(R.string.google_pic))
                             .into(nav_view.getHeaderView(0).user_image)
-                    }
-                    else {
+                    } else {
                         Picasso.get().load(gson.pic).into(nav_view.getHeaderView(0).user_image)
                     }
                 } else {
