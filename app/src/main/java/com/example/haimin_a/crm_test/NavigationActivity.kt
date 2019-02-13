@@ -143,6 +143,14 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 )
                 title = "Record Media"
             }
+            R.id.nav_gallery -> {
+                replaceFragment(
+                    GalleryFragment(),
+                    true,
+                    R.id.navigation_content
+                )
+                title = "Gallery"
+            }
             R.id.nav_settings -> {
                 replaceFragment(
                     SettingsFragment(),

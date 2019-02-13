@@ -12,24 +12,56 @@
             android:layout_height="wrap_content" android:id="@+id/video" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/photo" app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintVertical_bias="0.24"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/photo"
+            app:layout_constraintVertical_bias="0.185"/>
     <Button
             android:text="@string/photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/photo" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintHorizontal_bias="0.501" android:layout_marginTop="100dp"
-            app:layout_constraintTop_toBottomOf="@+id/microphone"/>
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.501" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/play" app:layout_constraintVertical_bias="0.135"/>
     <Button
             android:text="@string/microphone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/microphone" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:id="@+id/start"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            android:layout_marginTop="132dp" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"/>
+            android:layout_marginTop="128dp" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toStartOf="@+id/pause"/>
+    <Button
+            android:text="@string/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/stop" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="128dp" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pause"
+            android:layout_marginStart="8dp" app:layout_constraintHorizontal_bias="0.456"/>
+    <Button
+            android:text="@string/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/play"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintHorizontal_bias="0.498" android:layout_marginTop="52dp"
+            app:layout_constraintTop_toBottomOf="@+id/pause"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.033"/>
+    <Button
+            android:text="@string/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pause"
+            android:layout_marginTop="128dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintHorizontal_bias="0.501"
+    />
 
 </android.support.constraint.ConstraintLayout>

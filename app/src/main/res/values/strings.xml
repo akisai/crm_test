@@ -128,7 +128,12 @@
     <string name="subject">Subject</string>
     <string name="send">Send</string>
     <string name="record_media">Record Media</string>
-    <string name="video">Video</string>
     <string name="photo">Photo</string>
-    <string name="microphone">Sound</string>
+    <string name="video">Video</string>
+    <string name="microphone">Start</string>
+    <string name="stop">Stop</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="gallery">Gallery</string>
+    <string name="sound">Sound</string>
 </resources>
